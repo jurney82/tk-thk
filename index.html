@@ -1,0 +1,1714 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>THK 카탈로그 검색 · 태광베어링</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#1a6fc4">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="THK 검색">
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* Layout: sticky search rail on top; results column + page viewer side by side on wide screens, viewer as full-screen sheet on phones */
+:root{
+  --bg:#eaf4fc; --surface:#ffffff; --sunk:#f3f8fd; --ink:#0f2238; --muted:#52677d; --line:#cddfee;
+  --accent:#1a6fc4; --accent-ink:#ffffff; --accent-soft:#dcebfa; --mark:#ffd34d66; --hl:#ffcf2e; --warn:#9a5b00; --warn-soft:#fff2d6;
+  --ok:#1d7a46; --bad:#b3261e;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1622; --surface:#122030; --sunk:#0e1a27; --ink:#e3edf6; --muted:#90a4b8; --line:#22374b;
+  --accent:#6db8f2; --accent-ink:#04182b; --accent-soft:#143552; --mark:#ffcc3340; --hl:#ffcf2e; --warn:#f0b45a; --warn-soft:#3a2a10;
+  --ok:#5cc98a; --bad:#ff8a80; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1622; --surface:#122030; --sunk:#0e1a27; --ink:#e3edf6; --muted:#90a4b8; --line:#22374b;
+  --accent:#6db8f2; --accent-ink:#04182b; --accent-soft:#143552; --mark:#ffcc3340; --hl:#ffcf2e; --warn:#f0b45a; --warn-soft:#3a2a10;
+  --ok:#5cc98a; --bad:#ff8a80; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:inset 0 3px 0 var(--accent)}
+.bar{grid-template-columns:minmax(0,1fr);max-width:1280px;margin:0 auto;padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:10px}
+.brand{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.brand h1{margin:0;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.brand span{font-size:12px;color:var(--muted)}
+.tabs{margin-left:auto;display:flex;gap:4px;background:var(--sunk);border:1px solid var(--line);border-radius:var(--r);padding:3px}
+.tabs button{border:0;background:none;border-radius:4px;padding:4px 12px;font-size:13px;color:var(--muted)}
+.tabs button.on{background:var(--surface);color:var(--ink);font-weight:500;box-shadow:0 0 0 1px var(--line)}
+.qrow{display:flex;gap:8px;flex-wrap:wrap}
+.qbox{flex:1 1 260px;min-width:0;position:relative}
+#q{width:100%;height:46px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--sunk);padding:0 40px 0 14px;font-size:16px}
+#q:focus{border-color:var(--accent);outline:none;background:var(--surface)}
+#clear{position:absolute;right:6px;top:7px;width:32px;height:32px;border:0;background:none;color:var(--muted);font-size:20px;line-height:1;border-radius:4px}
+@media (max-width:600px){#cat{flex-basis:100%!important;width:100%}}
+#cat{height:46px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--sunk);padding:0 10px;max-width:100%;flex:0 1 220px;min-width:0}
+
+main{grid-template-columns:minmax(0,1fr);max-width:1280px;margin:0 auto;padding-block:16px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:20px}
+@media (min-width:980px){main.has-view{grid-template-columns:minmax(0,460px) minmax(0,1fr);align-items:start}}
+#results,#calc{min-width:0;display:grid;gap:18px;align-content:start}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--muted)}
+.sec-h b{color:var(--ink);font-family:var(--f-mono);letter-spacing:0;font-size:13px}
+.list{display:grid;gap:8px}
+.grp{font-size:12px;color:var(--muted);margin:10px 0 2px;font-weight:500}
+.item{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:10px 12px;min-width:0}
+.item:hover{border-color:var(--accent)}
+.item.on{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.item .top{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.lab{font-family:var(--f-mono);font-weight:500;font-size:14px;color:var(--accent)}
+.cat{font-size:12px;color:var(--muted)}
+.crumb{font-size:12px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rows{margin-top:6px;overflow-x:auto;background:var(--sunk);border-radius:4px;padding:6px 8px}
+.rows div{font-family:var(--f-mono);font-size:12px;white-space:pre;line-height:1.6}
+.snip{margin-top:6px;font-size:13px;color:var(--ink);display:grid;gap:2px}
+.snip div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 1px}
+.tag{display:inline-block;font-size:11px;padding:0 6px;border-radius:3px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.hint{font-size:13px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip.mono{font-size:12.5px}
+.empty{display:grid;gap:22px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;min-width:0}
+.panel h2{margin:0 0 10px;font-size:14px}
+.catlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:4px 16px}
+.catlist button{display:flex;justify-content:space-between;gap:8px;border:0;background:none;padding:5px 0;text-align:left;border-bottom:1px dashed var(--line);font-size:13px;min-width:0}
+.catlist button span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.catlist button span:last-child{color:var(--muted);font-family:var(--f-mono);font-size:12px;flex:none}
+.catlist button:hover span:first-child{color:var(--accent)}
+.loading{padding:40px 0;text-align:center;color:var(--muted)}
+
+/* spec answer */
+.ans{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.ans-h{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline}
+.ans-h strong{font-size:15px}
+.ans-h span{font-size:12px;color:var(--muted)}
+.tw{overflow-x:auto}
+table.st{border-collapse:collapse;width:100%;font-size:13px}
+table.st th,table.st td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+table.st th{font-size:11.5px;font-weight:500;color:var(--muted);background:var(--sunk)}
+table.st td.v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;font-size:13.5px}
+table.st td.v.big{font-weight:500;color:var(--ink)}
+table.st tr.cg td{background:var(--sunk);font-size:11.5px;color:var(--muted);font-weight:500;padding:5px 10px}
+table.st tr.r{cursor:pointer}
+table.st tr.r:hover td{background:var(--accent-soft)}
+table.st tr.r.on td{background:var(--accent-soft)}
+table.st td.m{font-family:var(--f-mono);font-weight:500;color:var(--accent)}
+table.st td.pg{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+table.st td{vertical-align:top}
+.more{display:block;width:100%;border:0;border-top:1px solid var(--line);background:var(--sunk);padding:8px;font-size:13px;color:var(--accent)}
+
+/* viewer */
+#viewer{min-width:0}
+#viewer[hidden]{display:none!important}
+@media (min-width:980px){#viewer{position:sticky;top:calc(env(safe-area-inset-top,0px) + 132px)}#vback{display:none}}
+@media (max-width:979px){
+  #viewer{position:fixed;inset:0;z-index:40;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  body.viewing{overflow:hidden}
+}
+.vcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+@media (min-width:980px){.vcard{max-height:calc(100vh - 150px);overflow-y:auto}}
+@media (max-width:979px){.vcard{border:0;border-radius:0;min-height:100%}}
+.vhead{padding:12px 16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line);display:grid;gap:6px;position:sticky;top:0;background:var(--surface);z-index:2}
+.vtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#vback{border:1px solid var(--line);background:var(--sunk);border-radius:var(--r);height:34px;padding:0 12px;font-size:14px}
+.vlab{font-family:var(--f-mono);font-size:20px;font-weight:500;color:var(--accent)}
+.vpdf{font-size:12px;color:var(--muted);font-family:var(--f-mono)}
+.vcat{font-size:13px;font-weight:500}
+.vcrumb{font-size:12px;color:var(--muted)}
+.vnav{display:flex;gap:6px;flex-wrap:wrap}
+.vnav button{border:1px solid var(--line);background:var(--sunk);border-radius:var(--r);height:32px;padding:0 10px;font-size:13px}
+.vnav button:disabled{opacity:.4;cursor:default}
+.vnav button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.vnav a.navlink{display:inline-flex;align-items:center;border:1px solid var(--line);background:var(--sunk);border-radius:var(--r);height:32px;padding:0 10px;font-size:13px;color:var(--ink);text-decoration:none}
+.vnav a.navlink:hover{border-color:var(--accent);color:var(--accent)}
+.pdfbox{display:flex;gap:12px;align-items:center;border:1.5px solid var(--accent);border-radius:var(--r);padding:10px 12px;background:var(--accent-soft);flex-wrap:wrap}
+.pdfbox b{font-size:13px;word-break:break-all}
+.pdfbtn{flex:none;display:inline-flex;align-items:center;height:38px;padding:0 16px;border-radius:var(--r);background:var(--accent);color:var(--accent-ink);font-weight:600;text-decoration:none;font-size:14px}
+.vnav button.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.vbody{padding:14px 16px 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:14px;min-width:0}
+.note{font-size:13px;background:var(--warn-soft);color:var(--warn);border-radius:4px;padding:8px 10px}
+.note.info{background:var(--accent-soft);color:var(--accent)}
+.spec{display:grid;gap:6px}
+.spec h3{margin:0;font-size:13px;color:var(--muted);font-weight:500}
+.kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.kv div{display:flex;justify-content:space-between;gap:8px;padding:6px 10px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);font-size:12.5px;min-width:0}
+.kv div span:first-child{color:var(--muted);overflow:hidden;text-overflow:ellipsis}
+.kv div span:last-child{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.kv div.hit{background:var(--warn-soft)}
+.kv div.hit span{color:var(--ink);font-weight:500}
+.imgs{display:grid;gap:12px}
+@media (min-width:1280px){.imgs.two{grid-template-columns:1fr 1fr}}
+.pg{display:grid;gap:4px;min-width:0}
+.pg .cap{font-size:12px;color:var(--muted);font-family:var(--f-mono)}
+.pg .cap b{color:var(--ink);font-weight:500}
+.pgwrap{overflow:auto;border:1px solid var(--line);border-radius:4px;background:#fff;max-height:none}
+.crop{position:relative;overflow:hidden;width:100%;background:#f4f6f7 linear-gradient(90deg,#f4f6f7,#e9edf0,#f4f6f7)}
+.crop img{position:absolute;left:0;width:100%;height:auto;max-width:none;display:block}
+.crop .hlb{position:absolute;left:0;right:0;background:rgba(255,207,46,.38);border-top:2px solid #e0a800;border-bottom:2px solid #e0a800;pointer-events:none;mix-blend-mode:multiply}
+.crop.err::after{content:"그림을 불러오지 못했습니다. 다시 열어 주세요.";position:absolute;inset:0;display:grid;place-items:center;color:#6b7782;font-size:13px}
+.zoom .pgwrap{max-height:80vh}
+.zoom .crop{width:220%;max-width:none}
+details{border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;font-size:13px;font-weight:500;color:var(--muted)}
+pre.txt{margin:10px 0 0;font-family:var(--f-mono);font-size:12px;line-height:1.55;white-space:pre;overflow-x:auto;background:var(--sunk);border-radius:4px;padding:10px 12px}
+
+/* calculators */
+.cpick{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.cpick button{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:10px 12px;display:grid;gap:2px}
+.cpick button b{font-size:14px;font-weight:600}
+.cpick button span{font-size:12px;color:var(--muted)}
+.cpick button.on{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.form{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px 14px}
+.fld{display:grid;gap:4px;min-width:0}
+.fld label{font-size:12.5px;font-weight:500}
+.fld input,.fld select{height:40px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--sunk);padding:0 10px;min-width:0;width:100%}
+.fld input:focus,.fld select:focus{border-color:var(--accent);outline:none;background:var(--surface)}
+.fld .src{font-size:11.5px;color:var(--muted)}
+.fld .src button{border:0;background:none;padding:0;color:var(--accent);font-size:11.5px;text-decoration:underline}
+.fld.auto input{border-color:var(--accent)}
+.fld.wide{grid-column:1/-1}
+.pdfout{margin-top:14px;border:1.5px solid var(--accent);border-radius:var(--r);padding:12px 14px;background:var(--surface)}
+.pdfout h3{margin:0 0 10px;font-size:14px}
+.pdfout .form{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.porow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.pobtn{height:40px;padding:0 18px;border:0;border-radius:var(--r);background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:14px;cursor:pointer}
+.pobtn:disabled{opacity:.6;cursor:wait}
+#print-sheet{display:none}
+.ps{width:182mm;color:#111;background:#fff;font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif;font-size:10.5pt;line-height:1.5}
+.ps .ps-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2.5px solid #1a6fc4;padding-bottom:6px;margin-bottom:10px}
+.ps .ps-co{font-size:17pt;font-weight:800;color:#1a6fc4;letter-spacing:-.02em}
+.ps .ps-title{font-size:12pt;font-weight:700;text-align:right}
+.ps table{border-collapse:collapse;width:100%;margin:4px 0 10px}
+.ps th,.ps td{border:1px solid #c9d2d8;padding:5px 8px;text-align:left;vertical-align:top;font-size:9.5pt}
+.ps th{background:#eaf3fc;font-weight:700;white-space:nowrap;width:1%}
+.ps .ps-meta td{width:34%}
+.ps h3{font-size:11pt;margin:12px 0 4px;color:#1a6fc4}
+.ps .ps-ver{background:#eaf3fc;border-radius:4px;padding:8px 10px;font-size:10.5pt}
+.ps .ps-step{border:1px solid #c9d2d8;border-radius:4px;padding:6px 10px;margin:0 0 6px;break-inside:avoid}
+.ps .ps-step h4{margin:0 0 3px;font-size:10pt;display:flex;justify-content:space-between;gap:8px}
+.ps .ps-step h4 span{font-weight:500;color:#555;font-size:9pt;white-space:nowrap}
+.ps .ps-eq{font-family:Consolas,"D2Coding",monospace;font-size:9.5pt;margin:1px 0}
+.ps .ps-eq i{font-style:normal;color:#666;display:inline-block;width:34px}
+.ps .ps-eq.r{font-weight:700}
+.ps .ps-foot{margin-top:12px;border-top:1px solid #c9d2d8;padding-top:6px;font-size:8.5pt;color:#555}
+.ps .muted{color:#666}
+@media print{
+  @page{size:A4;margin:14mm}
+  html,body{background:#fff!important}
+  body>*:not(#print-sheet){display:none!important}
+  #print-sheet{display:block!important}
+}
+.cguide{display:grid;gap:6px;background:var(--accent-soft);border-radius:var(--r);padding:10px 12px;margin:2px 0 14px;font-size:13px;line-height:1.5}
+.cguide>div{display:grid;grid-template-columns:84px 1fr;gap:8px;align-items:baseline}
+.cguide span{font-weight:700;color:var(--accent);font-size:12px}
+.cguide p{margin:0}
+.cguide .cgfoot{display:block;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:6px;margin-top:2px}
+.fld .conv{font-size:11.5px;color:var(--accent);font-weight:600;min-height:0}
+.modal{position:fixed;inset:0;background:rgba(10,20,25,.45);z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:5vh 16px;overflow:auto}
+.mbox{background:var(--surface);color:var(--ink);border-radius:var(--r);max-width:640px;width:100%;padding:14px 16px;display:grid;gap:10px;box-shadow:0 10px 40px rgba(0,0,0,.25);min-width:0}
+.mbox.wide{max-width:1000px}
+.mhead{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mx{border:0;background:none;font-size:26px;line-height:1;color:var(--muted);cursor:pointer;padding:0 4px}
+#reply-text{width:100%;box-sizing:border-box;font:inherit;font-size:14px;line-height:1.55;border:1.5px solid var(--line);border-radius:var(--r);padding:8px 10px;background:var(--sunk);color:var(--ink);resize:vertical}
+#cmp-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:40;background:var(--surface);color:var(--ink);border:1.5px solid var(--accent);border-radius:999px;padding:6px 8px 6px 16px;display:flex;gap:8px;align-items:center;box-shadow:0 6px 24px rgba(0,0,0,.18);max-width:calc(100% - 24px);font-size:13px}
+#cmp-bar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+#cmp-bar button{flex:none;height:34px;border-radius:999px;padding:0 14px}
+#cmp-bar #cmp-clear{border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+th.ck,td.ck{width:38px;text-align:center;padding-left:4px!important;padding-right:4px!important}
+td.ck input{width:18px;height:18px;cursor:pointer;margin:0}
+.cmpt th,.cmpt td{white-space:nowrap}
+.cmpt tbody th{background:var(--sunk);color:var(--ink);font-weight:600;text-align:left}
+.dect td.m{white-space:nowrap}
+.sbtn,#po-reply,#cmp-reply,#dec-reply{height:40px;padding:0 16px;border:1.5px solid var(--accent);border-radius:var(--r);background:var(--surface);color:var(--accent);font-weight:700;font-size:14px;cursor:pointer}
+#dec .chip{cursor:pointer}
+footer .rights{margin-top:6px;color:var(--ink);font-weight:500}
+.qbtn{background:var(--accent)!important;color:var(--accent-ink)!important;border-color:var(--accent)!important}
+#quote-modal .form{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+#quote-text{width:100%;box-sizing:border-box;font:inherit;font-size:14px;line-height:1.55;border:1.5px solid var(--line);border-radius:var(--r);padding:8px 10px;background:var(--sunk);color:var(--ink);resize:vertical}
+.helpbtn{border:1px solid var(--line);background:var(--surface);color:var(--accent);border-radius:999px;padding:3px 11px;font-size:12.5px;font-weight:600;cursor:pointer;margin-left:2px}
+.helpc{display:grid;gap:10px;font-size:14px;line-height:1.6}.helpc h4{margin:6px 0 0;font-size:14px}.helpc ul{margin:0;padding-left:18px}.helpc li{margin:2px 0}.helpc code{font-family:var(--f-mono);background:var(--sunk);padding:0 4px;border-radius:3px}
+.modal[hidden],#cmp-bar[hidden],#dec[hidden],#print-sheet[hidden]{display:none!important}
+#results>*,#results .ans,#dec>*,#dec .ans{min-width:0;max-width:100%}
+.tw{overflow-x:auto;max-width:100%}
+body.has-cmp{padding-bottom:72px}
+@media (max-width:560px){th.ck,td.ck{width:30px}}
+.ftip{display:block;font-size:11.5px;font-weight:600;color:#b45309}
+@media (max-width:560px){.cguide>div{grid-template-columns:1fr;gap:0}}
+
+.steps{display:grid;gap:10px}
+.step{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:12px 14px;display:grid;gap:6px;min-width:0}
+.step h4{margin:0;font-size:13.5px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline}
+.step h4 button{border:0;background:none;padding:0;color:var(--accent);font-size:12px;font-family:var(--f-mono);text-decoration:underline}
+.eq{font-family:var(--f-mono);font-size:13px;overflow-x:auto;white-space:nowrap;background:var(--sunk);border-radius:4px;padding:6px 10px}
+.eq.res{background:var(--accent-soft);color:var(--ink);font-weight:500;font-size:14px}
+.why{font-size:12.5px;color:var(--muted)}
+.verdict{border-radius:var(--r);padding:12px 14px;font-size:14px;background:var(--accent-soft)}
+.verdict.ok{background:color-mix(in srgb,var(--ok) 14%,var(--surface));color:var(--ink)}
+.verdict.bad{background:color-mix(in srgb,var(--bad) 14%,var(--surface));color:var(--ink)}
+.verdict b{font-family:var(--f-mono)}
+footer{max-width:1280px;margin:0 auto;padding-block:0 30px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));font-size:12px;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.item,.chip{transition:border-color .12s}}
+</style>
+<style>[hidden]{display:none!important}img{max-width:100%}body{margin:0}</style>
+</head>
+<body>
+
+
+<style>#gate,#gate *{box-sizing:border-box}#gate form{margin:0}#gate input,#gate button{display:block;width:100%;min-width:0;margin:0;font-family:inherit;-webkit-appearance:none;appearance:none}#gate input:focus{outline:none;border-color:var(--accent,#1a6fc4)!important;background:var(--surface,#fff)!important}</style>
+<div id="gate" style="position:fixed;inset:0;z-index:100;background:var(--bg,#eaf4fc);display:flex;align-items:center;justify-content:center;padding:16px">
+  <form id="gate-f" style="background:var(--surface,#fff);color:var(--ink,#14202b);border:1px solid var(--line,#d5dce2);border-radius:10px;padding:26px 24px;width:100%;max-width:340px;display:grid;gap:12px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.12)">
+    <div style="font-size:18px;font-weight:700">THK 카탈로그 검색</div>
+    <div style="font-size:13px;color:var(--muted,#5a6876)">태광베어링 제공 | 받으신 고객사명과 접근 코드를 입력하세요</div>
+    <input id="gate-name" type="text" autocomplete="organization" placeholder="고객사명" style="height:44px;font-size:16px;text-align:center;border:1.5px solid var(--line,#d5dce2);border-radius:8px;background:var(--sunk,#f6f8f9);color:inherit">
+    <input id="gate-pw" type="password" autocapitalize="characters" autocomplete="current-password" placeholder="접근 코드 6자리" style="height:44px;font-size:18px;text-align:center;border:1.5px solid var(--line,#d5dce2);border-radius:8px;background:var(--sunk,#f6f8f9);color:inherit">
+    <button type="submit" style="height:44px;border:0;border-radius:8px;background:var(--accent,#1a6fc4);color:#fff;font-weight:700;font-size:15px">확인</button>
+    <div id="gate-err" style="font-size:13px;color:#b3261e;min-height:1em"></div>
+  </form>
+</div>
+<header>
+  <div class="bar">
+    <div class="brand"><h1>THK 카탈로그 검색</h1><span id="meta">태광베어링 제공</span><button type="button" id="help-btn" class="helpbtn" aria-label="사용 안내">사용 안내</button><button type="button" id="quote-btn" class="helpbtn qbtn">견적 문의</button>
+      <div class="tabs" role="tablist"><button id="t-search" class="on" role="tab">검색</button><button id="t-calc" role="tab">계산기</button><button id="t-dec" role="tab">형번 풀이</button></div>
+    </div>
+    <div class="qrow" id="qrow">
+      <div class="qbox">
+        <input id="q" type="search" inputmode="search" autocomplete="off" placeholder="형번 + 항목 (예: HSR25 정격하중, BLK2525 허용회전수, CF10 외경)" aria-label="검색어">
+        <button id="clear" aria-label="지우기" hidden>×</button>
+      </div>
+      <select id="cat" aria-label="카탈로그 범위"><option value="">전체 카탈로그</option></select>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section id="results" aria-live="polite"><div class="loading">카탈로그 색인을 불러오는 중입니다 (처음 한 번만 몇 초 걸립니다)…</div></section>
+  <section id="calc" hidden></section>
+  <section id="dec" hidden></section>
+  <section id="viewer" hidden></section>
+</main>
+<footer>원본: THK·삼익THK 카탈로그 PDF 31개에서 추출. 표의 숫자는 PDF에서 자동으로 뽑은 값이라, 노란색으로 표시된 원본 줄과 대조해 확인하세요. 계산 결과는 카탈로그 공식에 따른 참고값이며, 최종 선정은 제조사(THK·삼익THK) 기준으로 확인해 주세요. 견적·납기 문의: <a href="mailto:adam@bearings.co.kr">adam@bearings.co.kr</a><div class="rights">ⓒ 2026 태광베어링 · 이 검색 도구는 태광베어링이 고객사에 제공하는 것으로, 사용 권한은 태광베어링에 있으며 허가 없이 복제·배포할 수 없습니다. 카탈로그 내용의 저작권은 THK·삼익THK에 있습니다.</div></footer>
+
+<script>
+(() => {
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let D = null, S = null, Z = null, ZC = null, BASE = [], curView = null, lastQ = '', FIDX = {};
+
+const SYN = {
+  '그리스':['그리스','윤활제','윤활'],'윤활':['윤활','그리스','급유'],'주입량':['주입량','봉입량','윤활량','급유량','급지량'],
+  '급유':['급유','급지','윤활량','급유량','급유간격'],'급지':['급지','급유','급유간격'],'주기':['주기','간격','급유간격'],
+  '수명':['정격수명','수명'],'허용회전수':['허용회전수','위험속도','DN값','한계회전수'],'회전수':['허용회전수','한계회전수','위험속도'],
+  '위험속도':['위험속도','허용회전수'],'정격하중':['정격하중','기본동정격하중','기본정정격하중','기본정격하중'],
+  '동정격하중':['기본동정격하중','동정격하중'],'정정격하중':['기본정정격하중','정정격하중'],
+  '허용모멘트':['허용정적모멘트','허용모멘트','정적허용모멘트'],'모멘트':['허용정적모멘트','정적허용모멘트','모멘트'],
+  '레일길이':['표준길이','최대길이','레일길이'],'표준길이':['표준길이','최대길이'],'최대길이':['최대길이','제작한계길이'],
+  '예압':['예압','레이디얼클리어런스','클리어런스'],'좌굴':['좌굴','허용축방향하중'],'정도':['정도','정밀도'],
+  '치수':['치수표','치수도','치수'],'체결토크':['체결토크','조임토크'],'장착':['장착','설치'],'캠팔로워':['캠플로워','캠팔로워'],
+  '캠플로워':['캠플로워','캠팔로워'],'볼스크류':['볼나사'],'볼스크루':['볼나사'],'엘엠가이드':['LM가이드']
+};
+const isModel = t => /^[A-Z]{2,6}\d/.test(t);
+function store(k, v){ try{ if(v===undefined) return JSON.parse(localStorage.getItem(k)||'null'); localStorage.setItem(k, JSON.stringify(v)); }catch(e){ return null; } }
+const num = v => { const m = String(v).replace(/,/g,'').match(/-?\d+(\.\d+)?/); return m ? parseFloat(m[0]) : NaN; };
+function fmt(x, sig=3){
+  if(!isFinite(x)) return '—';
+  const a = Math.abs(x);
+  if(a >= 1e6){ const e = Math.floor(Math.log10(a)); const m = x/Math.pow(10,e); return `${m.toFixed(2)}×10<sup>${e}</sup>`; }
+  if(a >= 1000) return Math.round(x).toLocaleString('en-US');
+  if(a >= 100) return (Math.round(x*10)/10).toLocaleString('en-US');
+  if(a === 0) return '0';
+  return String(+x.toPrecision(sig+1));
+}
+
+/* ======================= load ======================= */
+function loadScript(src){ return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => no(new Error(src+' 파일을 찾지 못했습니다')); document.head.appendChild(s); }); }
+async function load(){
+  try{
+    await loadScript('data.js'); D = window.THK_DATA; if(!D) throw new Error('data.js 없음');
+  }catch(e){ $('#results').innerHTML = `<div class="panel">색인 파일을 불러오지 못했습니다 (${esc(e.message||e)}). 이 파일과 같은 폴더에 data.js · specs.js · pg 폴더가 있는지 확인하세요.</div>`; return; }
+  BASE = D.short.map(s => s.replace(/ B 기술해설$/,''));
+  D.pages.forEach((p,i) => { FIDX[D.files[p.f]+'|'+p.p] = i; });
+  const cnt = {}; D.pages.forEach(p => { const b = BASE[p.c]; cnt[b] = (cnt[b]||0)+1; }); D.catCount = cnt;
+  Object.entries(cnt).sort((a,b)=>b[1]-a[1]).forEach(([b,n]) => { const o = document.createElement('option'); o.value = b; o.textContent = `${b} (${n}쪽)`; $('#cat').appendChild(o); });
+  $('#meta').textContent = `태광베어링 제공${CUSTNAME ? ' · ' + CUSTNAME + ' 전용' : ''} · ${D.pages.length.toLocaleString()}쪽`;
+  const saved = store('thk-cat'); if(saved && cnt[saved]) $('#cat').value = saved;
+  renderHome();
+  try{ await loadScript('specs.js'); S = window.THK_SPECS || []; S.forEach(s => s.z = s.m.replace(/[\s]/g,'').toUpperCase()); $('#meta').textContent += ` · 형번 ${S.length.toLocaleString()}줄`; if(lastQ) run(lastQ); }
+  catch(e){ S = []; }
+}
+function prep(){ if(Z) return; Z = D.pages.map(p => p.t.replace(/\s+/g,'').toUpperCase()); ZC = D.pages.map(p => p.k.replace(/\s+/g,'').toUpperCase()); }
+function inScope(i){ const c = $('#cat').value; return !c || BASE[D.pages[i].c] === c; }
+const pageAt = (file, p) => FIDX[file+'|'+p];
+
+/* ======================= query parsing ======================= */
+function parse(q){
+  const rawCase = q.trim().split(/\s+/).filter(Boolean);
+  const raw = rawCase.map(t => t.toUpperCase());
+  const toks = [], orig = [];
+  for(let i=0;i<raw.length;i++){
+    if(/^[A-Z]{2,6}$/.test(raw[i]) && raw[i+1] && /^\d/.test(raw[i+1])){ toks.push(raw[i]+raw[i+1]); orig.push(rawCase[i]+rawCase[i+1]); i++; }
+    else { toks.push(raw[i]); orig.push(rawCase[i]); }
+  }
+  const models = [], words = [], wordsOrig = [];
+  toks.forEach((t,k) => {
+    const m = t.match(/^([A-Z]{2,6})(\d{1,5})(.*)$/);
+    if(m) models.push({key:m[1]+m[2], full:t.replace(/[^A-Z0-9.\-+]/g,''), tok:t}); else { words.push(t); wordsOrig.push(orig[k]); }
+  });
+  return {toks, models, words, wordsOrig};
+}
+function variants(t){
+  const v = new Set([t.replace(/\s+/g,'').toUpperCase()]);
+  for(const k in SYN) if(t.includes(k)) SYN[k].forEach(x => v.add(x.toUpperCase()));
+  return [...v].filter(Boolean);
+}
+
+/* ======================= items (which column the user asks for) ======================= */
+const isDyn = l => /(^|[\s(])C[ar]?($|[\s)])/.test(l) && !/C0/.test(l) && /(kN|정격|\(N\)|\bN\b)/.test(l) && !/외륜폭|폭/.test(l) && !/(^|[\s(])C\s?0?T\b/.test(l);
+const isSta = l => /C0/.test(l) && /(kN|정격|\(N\)|\bN\b)/.test(l);
+const ITEMS = [
+  {re:/^(동정격|동정격하중|기본동정격하중|동하중|C|CA|CR)$/i, name:'기본동정격하중', f:isDyn},
+  {re:/^(정정격|정정격하중|기본정정격하중|정하중|C0|C0A)$/i, name:'기본정정격하중', f:isSta},
+  {re:/^(정격하중|하중|기본정격하중|부하용량)$/, name:'정격하중', f:l => isDyn(l)||isSta(l)||/허용하중|부하용량/.test(l)},
+  {re:/회전수|^RPM$|^회전$|^속도$/i, name:'허용회전수', f:l => /회전/.test(l) || /min/.test(l)},
+  {re:/모멘트|^M[ABC]$/i, name:'정적허용모멘트', f:l => /모멘트/.test(l)},
+  {re:/^(레일폭|레일 폭)$/, name:'레일 폭 W1', f:l => /\bW1\b/.test(l) && !/(^|\s)[BC](\s|$)/.test(l)},
+  {re:/^(레일높이)$/, name:'레일 높이 M1', f:l => /\bM1\b/.test(l) && /높이|LM/.test(l)},
+  {re:/^(높이|전고)$/, name:'높이', f:l => /높이/.test(l) && !/M1|피치/.test(l)},
+  {re:/^(폭|블록폭)$/, name:'폭', f:l => /폭/.test(l) && !/W1|W2|W3|외륜폭/.test(l)},
+  {re:/^(길이|블록길이|전장)$/, name:'길이·전장', f:l => /길이 L$|길이 L\b|^L$|전장|길이$/.test(l) && !/축길이|Max/.test(l)},
+  {re:/최대길이|레일길이|^MAX$/i, name:'레일 최대 길이', f:l => /Max/.test(l)},
+  {re:/^(피치|레일피치)$/, name:'피치', f:l => /피치/.test(l)},
+  {re:/^(리드|PH)$/i, name:'리드', f:l => /리드|\bPh\b/.test(l)},
+  {re:/^(곡경|골경|DC|D1곡경)$/i, name:'곡경', f:l => /곡경|\bdc\b/.test(l)},
+  {re:/^(볼중심경|중심경|BCD|DP)$/i, name:'볼중심경·피치원경', f:l => /중\s?심경|BCD|\bdp\b|피치\s?원경/.test(l)},
+  {re:/^(외경|OD)$/i, name:'외경', f:l => /외\s?경/.test(l)},
+  {re:/^(내경|ID|축경|스터드경)$/i, name:'내경·축경', f:l => /내경|축경|스터드경|축 외경/.test(l)},
+  {re:/^(질량|무게|중량)$/, name:'질량', f:l => /질량/.test(l)},
+  {re:/^(강성)$/, name:'강성', f:l => /강성/.test(l)},
+  {re:/^(나사|볼트|장착구멍|탭)$/, name:'장착 나사', f:l => /장착구멍|나사 G|\bS\b|S×/.test(l)},
+  {re:/^(그리스니플|니플|급유구)$/, name:'급유구', f:l => /니플|급유구/.test(l)},
+];
+function itemDefs(P){
+  const out = [];
+  P.wordsOrig.forEach(w => {
+    const W = w.toUpperCase();
+    const d = ITEMS.find(it => it.re.test(w) || it.re.test(W));
+    if(d){ const list = d.name==='정격하중' ? [ITEMS[0], ITEMS[1]] : [d]; list.forEach(x => { if(!out.includes(x)) out.push(x); }); }
+    else if(w.length >= 1 && !/^(값|얼마|알려줘|좀|뭐야|\?)$/.test(w)){
+      // label symbol or Korean word, matched as written
+      out.push({name:w, f:l => l.split(/\s+/).includes(w) || (w.length>=2 && /[가-힣]/.test(w) && l.includes(w))});
+    }
+  });
+  return out;
+}
+const DEFAULT_ITEMS = [ITEMS[0], ITEMS[1], ITEMS[3]];
+function cellsOf(s){ return s.c.concat(s.pc||[]); }
+function pickCells(s, def){ return cellsOf(s).filter(([l]) => def.f(l)); }
+
+/* ======================= spec answer ======================= */
+function specHits(m){
+  if(!S) return [];
+  const full = m.full.replace(/[^A-Z0-9.]/g,'');
+  let hits = S.filter(s => s.z.replace(/[^A-Z0-9.]/g,'').startsWith(full) && inScope(s.i));
+  if(!hits.length && full !== m.key) hits = S.filter(s => s.z.startsWith(m.key) && inScope(s.i));
+  const exact = s => s.z.replace(/[^A-Z0-9.]/g,'') === full ? 0 : 1;
+  hits.sort((a,b) => exact(a)-exact(b) || a.i-b.i || a.t-b.t);
+  return hits;
+}
+function specAnswer(P, m){
+  const hits = specHits(m);
+  if(!hits.length) return '';
+  let defs = itemDefs(P); const asked = defs.length > 0;
+  if(!asked) defs = DEFAULT_ITEMS;
+  let rows = hits.slice();
+  if(asked){
+    // per catalog: when no row of that catalog carries the asked value (e.g. rail width sits in a separate rail table), add same-size rows that do
+    const fileOf = h => D.pages[h.i].f, byFile = {};
+    rows.forEach(h => (byFile[fileOf(h)] = byFile[fileOf(h)] || []).push(h));
+    Object.entries(byFile).forEach(([f, hs]) => {
+      defs.forEach(d => {
+        if(hs.some(h => pickCells(h,d).length)) return;
+        const extra = S.filter(x => D.pages[x.i].f == f && x.k === m.key && !rows.includes(x) && pickCells(x,d).length && inScope(x.i)).slice(0,3);
+        extra.forEach(x => { x._extra = true; rows.push(x); });
+      });
+    });
+    const withVal = rows.filter(h => defs.some(d => pickCells(h,d).length));
+    if(withVal.length) rows = withVal;
+    rows.sort((a,b) => a.i-b.i || a.t-b.t);
+    const exact = h => h.z.replace(/[^A-Z0-9.]/g,'') === m.full.replace(/[^A-Z0-9.]/g,'') ? 0 : 1;
+    rows.sort((a,b) => D.pages[a.i].f - D.pages[b.i].f || exact(a)-exact(b) || a.i-b.i || a.t-b.t);
+  }
+  if(!asked){ const withVal = rows.filter(h => defs.some(d => pickCells(h,d).length)); if(withVal.length) rows = withVal; }
+  const cols = defs.map(d => ({d, has: rows.some(h => pickCells(h,d).length)})).filter(c => c.has || asked);
+  const show = rows.slice(0, 60);
+  let html = `<div class="ans"><div class="ans-h"><strong class="mono">${esc(m.full)}</strong><span>${asked ? esc(defs.map(d=>d.name).join(' · ')) : '주요 값'} · ${rows.length}줄 · 줄을 누르면 근거 페이지가 열립니다</span></div><div class="tw"><table class="st"><thead><tr><th class="ck" title="체크하면 비교표에 넣습니다">비교</th><th>형번</th>`;
+  cols.forEach(c => { html += `<th style="text-align:right">${esc(c.d.name)}</th>`; });
+  html += `<th>페이지</th></tr></thead><tbody>`;
+  let lastC = null;
+  show.forEach((s) => {
+    const p = D.pages[s.i], c = D.short[p.c];
+    if(c !== lastC){ html += `<tr class="cg"><td colspan="${cols.length+3}">${esc(c)}</td></tr>`; lastC = c; }
+    html += `<tr class="r" data-s="${S.indexOf(s)}"><td class="ck"><input type="checkbox" data-cmp="${S.indexOf(s)}" ${CMP.includes(S.indexOf(s))?'checked':''} aria-label="비교표에 넣기"></td><td class="m">${esc(s.m)}${s._extra?' <span class="tag">같은 크기 별도 표</span>':''}</td>`;
+    cols.forEach(cc => {
+      const v = pickCells(s, cc.d);
+      html += `<td class="v${asked?' big':''}" title="${esc(v.map(x=>x[0]).join(' / '))}">${v.length ? v.map(x=>esc(x[1])).join('<br>') : '<span class="hint">—</span>'}</td>`;
+    });
+    html += `<td class="pg">${esc(p.l)}</td></tr>`;
+  });
+  html += `</tbody></table></div>${rows.length>60?`<div class="hint" style="padding:8px 14px">상위 60줄만 표시합니다. 형번을 더 길게 입력하면 좁혀집니다 (예: ${esc(m.full)}C).</div>`:''}</div>`;
+  if(asked && cols.some(c=>!c.has)) html += `<p class="hint" style="margin:6px 0 0">「${esc(cols.filter(c=>!c.has).map(c=>c.d.name).join(', '))}」 항목을 이 형번 표에서 찾지 못했습니다. 줄을 눌러 전체 항목을 확인하세요.</p>`;
+  return `<div><div class="sec-h"><span>스펙 답변</span></div>${html}</div>`;
+}
+
+/* ======================= model jump (other mentions) ======================= */
+function modelHits(m){
+  let rows = D.models[m.key] || [];
+  const suf = m.full.slice(m.key.length);
+  if(suf){ const f = rows.filter(([i,l]) => l.replace(/[^A-Z0-9.]/gi,'').toUpperCase().includes(m.full.replace(/[^A-Z0-9.]/g,''))); if(f.length) rows = f; }
+  rows = rows.filter(([i]) => inScope(i));
+  const byPage = new Map();
+  rows.forEach(([i,l]) => { if(!byPage.has(i)) byPage.set(i,[]); const a = byPage.get(i); if(a.length<4 && !a.includes(l)) a.push(l); });
+  return [...byPage.entries()].sort((a,b) => (D.pages[b[0]].im?1:0)-(D.pages[a[0]].im?1:0) || a[0]-b[0]);
+}
+function suggest(key){
+  const pre = key.replace(/\d+$/,''), out = [];
+  for(const k in D.models){ if(k.startsWith(key) && k!==key) out.push(k); }
+  if(!out.length) for(const k in D.models){ if(k.startsWith(pre) && /\d/.test(k)) out.push(k); }
+  return out.sort((a,b)=>a.length-b.length || a.localeCompare(b,'en',{numeric:true})).slice(0,24);
+}
+
+/* ======================= text search ======================= */
+function textSearch(P, n){
+  prep();
+  const vl = P.toks.map(variants), res = [];
+  for(let i=0;i<D.pages.length;i++){
+    if(!inScope(i)) continue;
+    let cov=0, sc=0;
+    P.toks.forEach((t,ti) => {
+      let hit=false; const im = isModel(t);
+      for(const v of vl[ti]){ const ct = count(Z[i], v), cc = count(ZC[i], v); if(ct||cc){ hit=true; sc += Math.min(ct,6)*(isModel(v)?3:1) + cc*(im?20:8); } }
+      if(hit) cov += im?2:1;
+    });
+    if(!cov) continue;
+    const p = D.pages[i];
+    if(p.tc){ cov -= 1.5; sc *= 0.3; }
+    if(p.im && P.models.length) sc += 5;
+    res.push([cov, sc, i]);
+  }
+  res.sort((a,b)=> b[0]-a[0] || b[1]-a[1]);
+  return {hits: res.slice(0,n).map(r=>r[2]), total: res.length, vl};
+}
+function count(s, v){ if(!v) return 0; let c=0, k=s.indexOf(v); while(k>=0 && c<50){ c++; k=s.indexOf(v,k+v.length); } return c; }
+function hlRegex(vl){
+  const parts = [...new Set(vl.flat())].filter(v=>v.length>1).sort((a,b)=>b.length-a.length).map(v => [...v].map(ch => ch.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('\\s?'));
+  return parts.length ? new RegExp('('+parts.join('|')+')','gi') : null;
+}
+function hl(text, re){ const e = esc(text); return re ? e.replace(re, '<mark>$1</mark>') : e; }
+function snippet(i, vl, re){
+  const lines = D.pages[i].t.split('\n').map(s=>s.trim()).filter(Boolean), out = [], flat = vl.flat().filter(v=>v.length>1);
+  for(const l of lines){ const z = l.replace(/\s+/g,'').toUpperCase(); if(flat.some(v => z.includes(v))) out.push(hl(l.replace(/ {2,}/g,'  '), re)); if(out.length>=3) break; }
+  return out;
+}
+function itemHead(i){
+  const p = D.pages[i], crumb = p.k ? p.k.split(' > ').slice(-2).join(' › ') : '';
+  return `<div class="top"><span class="lab">${esc(p.l)}</span><span class="cat">${esc(D.short[p.c])}</span>${p.im?'<span class="tag">원본 그림</span>':''}${p.o?'<span class="tag warn">OCR</span>':''}</div>${crumb?`<div class="crumb">${esc(crumb)}</div>`:''}`;
+}
+
+function run(q){
+  q = q.trim(); lastQ = q; $('#clear').hidden = !q;
+  if(!D) return;
+  if(q.length<2){ renderHome(); return; }
+  const P = parse(q); let html = '';
+  P.models.forEach(m => { html += specAnswer(P, m); });
+  P.models.forEach(m => {
+    const pages = modelHits(m), re = hlRegex([[m.full, m.key]]);
+    if(pages.length){
+      html += `<details ${S&&specHits(m).length?'':'open'}><summary>이 형번이 나오는 페이지 ${pages.length}쪽</summary><div class="list" style="margin-top:8px">`;
+      let lastC = null;
+      pages.slice(0,40).forEach(([i,lines]) => {
+        const c = D.short[D.pages[i].c];
+        if(c!==lastC){ html += `<div class="grp">${esc(c)}</div>`; lastC = c; }
+        html += `<button class="item" data-i="${i}">${itemHead(i)}<div class="rows">${lines.map(l=>`<div>${hl(l,re)}</div>`).join('')}</div></button>`;
+      });
+      html += `</div></details>`;
+    } else if(!(S && specHits(m).length)){
+      const sg = suggest(m.key);
+      html += `<div class="panel"><div class="sec-h"><span>형번</span><b>${esc(m.full)}</b></div><p class="hint" style="margin:0 0 8px">카탈로그 표에서 이 형번을 찾지 못했습니다.${sg.length?' 비슷한 형번:':''}</p>${sg.length?`<div class="chips">${sg.map(k=>`<button class="chip mono" data-q="${k}${P.wordsOrig.length?' '+esc(P.wordsOrig.join(' ')):''}">${k}</button>`).join('')}</div>`:''}</div>`;
+    }
+  });
+  const T = textSearch(P, 25), re = hlRegex(T.vl);
+  html += `<details ${P.models.length?'':'open'}><summary>본문 검색 ${T.total?`상위 ${T.hits.length} / ${T.total}쪽`:'결과 없음'}</summary><div class="list" style="margin-top:8px">`;
+  T.hits.forEach(i => { const sn = snippet(i, T.vl, re); html += `<button class="item" data-i="${i}" data-hl="1">${itemHead(i)}${sn.length?`<div class="snip">${sn.map(s=>`<div>${s}</div>`).join('')}</div>`:''}</button>`; });
+  if(!T.total) html += `<p class="hint">다른 표현으로 검색해 보세요. 띄어쓰기 없이 써도 됩니다.</p>`;
+  html += `</div></details>`;
+  $('#results').innerHTML = html;
+  markActive();
+  const rec = (store('thk-recent')||[]).filter(x=>x!==q); rec.unshift(q); store('thk-recent', rec.slice(0,8));
+}
+
+function renderHome(){
+  const ex = ['HSR25 정격하중','BLK2525 허용회전수','SRS9XM','SSR15XW 레일폭','CF10 외경','RB2008','BNK1002 Ca','볼나사 그리스 주입량'];
+  const rec = store('thk-recent')||[], cats = Object.entries(D.catCount).sort((a,b)=>b[1]-a[1]);
+  $('#results').innerHTML = `<div class="empty">
+    <div><div class="sec-h"><span>이렇게 물어보세요</span></div><div class="chips">${ex.map(e=>`<button class="chip${/^[A-Z]/.test(e)?' mono':''}" data-q="${esc(e)}">${esc(e)}</button>`).join('')}</div>
+    <p class="hint" style="margin:10px 0 0">형번 뒤에 항목(정격하중, 허용회전수, 높이, 레일폭, 리드, 외경 등)을 붙이면 그 값만 표로 나옵니다. 줄을 누르면 근거 페이지가 열리고 해당 줄이 노란색으로 표시됩니다. 수명·허용회전수·좌굴 계산은 위쪽 「계산기」에서 합니다.</p></div>
+    ${rec.length?`<div><div class="sec-h"><span>최근 검색</span></div><div class="chips">${rec.map(e=>`<button class="chip" data-q="${esc(e)}">${esc(e)}</button>`).join('')}</div></div>`:''}
+    <div class="panel"><h2>수록 카탈로그</h2><div class="catlist">${cats.map(([b,n])=>`<button data-open="${esc(b)}"><span>${esc(b)}</span><span>${n}쪽</span></button>`).join('')}</div></div>
+  </div>`;
+}
+
+/* ======================= images ======================= */
+const sheetUrl = k => `pg/w${String(k).padStart(2,'0')}.webp`;
+function pageImg(j, boxes){
+  const [k,y,W,h,H,x,WT] = D.pages[j].im;
+  const hb = (boxes||[]).map(([t,b,ph]) => `<div class="hlb" style="top:${(t/ph*100-0.5).toFixed(3)}%;height:${((b-t)/ph*100+1).toFixed(3)}%"></div>`).join('');
+  return `<div class="crop" style="aspect-ratio:${W}/${h}"><img src="${sheetUrl(k)}" alt="${esc(D.pages[j].l)} 원본 페이지" style="top:-${(y/h*100).toFixed(4)}%;left:-${(x/W*100).toFixed(4)}%;width:${(WT/W*100).toFixed(4)}%" onerror="this.parentNode.classList.add('err')">${hb}</div>`;
+}
+
+/* ======================= viewer ======================= */
+function neighbors(i){
+  const p = D.pages[i];
+  return {prev: i>0 && D.pages[i-1].f===p.f ? i-1 : null, next: i<D.pages.length-1 && D.pages[i+1].f===p.f ? i+1 : null};
+}
+function openPage(i, useHl, spec){
+  curView = i;
+  const p = D.pages[i], v = $('#viewer'), nb = neighbors(i);
+  let set = [i];
+  if(spec && spec.pi!=null) set = [i, spec.pi];
+  else if(p.im && p.pr!=null) set = p.pr > i ? [i, p.pr] : [p.pr, i];
+  const P = lastQ ? parse(lastQ) : null;
+  const re = useHl && P ? hlRegex(P.toks.map(variants).concat(P.models.map(m=>[m.full,m.key]))) : null;
+  const zoomed = store('thk-zoom') ? ' zoom' : '';
+  const boxes = j => {
+    if(!spec) return [];
+    if(j===spec.i) return spec.hl ? spec.hl.map(([t,b])=>[t,b,spec.h]) : [[spec.t, spec.b, spec.h]];
+    if(j===spec.pi) return [[spec.pt, spec.pb, spec.h]];
+    if(spec.pi==null && !spec.hl && j===D.pages[spec.i].pr && !S.some(x => x.i===j)) return [[spec.t, spec.b, spec.h]];   // other half of a one-page spread: same height
+    return [];
+  };
+  let specHtml = '';
+  if(spec){
+    const defs = P ? itemDefs(P) : [];
+    const isHit = l => defs.some(d => d.f(l));
+    const kv = cs => `<div class="kv">${cs.map(([l,val]) => `<div class="${isHit(l)?'hit':''}"><span title="${esc(l)}">${esc(l||'(머리글 없음)')}</span><span>${esc(val)}</span></div>`).join('')}</div>`;
+    const fam = calcFamily(spec);
+    specHtml = `<div class="spec"><h3>${esc(spec.m)} · 이 줄에서 읽은 값 (${esc(p.l)}${spec.pc?` + ${esc(D.pages[spec.pi].l)}`:''})</h3>${kv(spec.c)}${spec.pc?`<h3 style="margin-top:6px">옆 쪽 같은 줄 (${esc(D.pages[spec.pi].l)})</h3>${kv(spec.pc)}`:''}
+      ${spec.n?`<div class="hint">${esc(spec.n)}</div>`:''}
+      <div class="hint">항목 이름은 표 머리글을 그대로 읽은 것입니다. 숫자는 아래 원본 그림의 노란 줄과 대조하세요. 치수 단위는 표 기준 mm입니다.</div></div>`;
+    const pdfName = (spec.pdf!=null && D.pdfs) ? D.pdfs[spec.pdf] : null;
+    if(pdfName) specHtml = `<div class="pdfbox"><a class="pdfbtn" href="원본쪽/${encodeURIComponent(pdfName)}" target="_blank" rel="noopener">원본 PDF 열기</a><div><b>${esc(pdfName)}</b><br><span class="hint">카탈로그 원본에서 이 쪽만 떼어낸 파일입니다. 열린 화면에서 확대해 숫자를 확인하고, 저장(다운로드)해서 사내 검토 자료로 쓸 수 있습니다.</span></div></div>` + specHtml;
+    specHtml += `<div class="vnav"><button type="button" data-reply="${S.indexOf(spec)}">견적 문의</button><button type="button" data-cmpadd="${S.indexOf(spec)}">비교표에 넣기</button>${fam.map(c=>`<button class="pri" data-calc="${c}" data-si="${S.indexOf(spec)}">${esc(CALCS[c].title)} 계산 →</button>`).join('')}</div>`;
+  }
+  v.innerHTML = `<div class="vcard">
+    <div class="vhead">
+      <div class="vtop"><button id="vback">← 목록</button><span class="vlab">${esc(p.l)}</span><span class="vpdf">PDF ${p.p}쪽</span>${p.o?'<span class="tag warn">스캔본 OCR</span>':''}</div>
+      <div><div class="vcat">${esc(D.cats[p.c])}</div>${p.k?`<div class="vcrumb">${esc(p.k.split(' > ').join(' › '))}</div>`:''}</div>
+      <div class="vnav">
+        <button data-go="${nb.prev??''}" ${nb.prev==null?'disabled':''}>← 이전 쪽</button>
+        <button data-go="${nb.next??''}" ${nb.next==null?'disabled':''}>다음 쪽 →</button>
+        ${p.im?`<button id="zoomb" class="${zoomed?'on':''}">${zoomed?'원래 크기':'크게 보기'}</button>`:''}
+        <a class="navlink" href="catalog/${encodeURIComponent(D.files[p.f])}#page=${p.p}" target="_blank" rel="noopener">카탈로그 원본에서 이 쪽 열기</a>
+      </div>
+    </div>
+    <div class="vbody">
+      ${specHtml}
+      ${set.length===2 && !spec?`<div class="note info">옆 쪽 그림도 함께 보여줍니다. 치수표가 두 쪽에 걸친 경우, 왼쪽 쪽의 형번 줄과 <b>같은 높이의 줄</b>을 오른쪽 쪽에서 읽으세요.</div>`:''}
+      ${p.o?`<div class="note">스캔본을 글자 인식(OCR)한 페이지입니다. 숫자는 반드시 원본 그림으로 확인하세요.</div>`:''}
+      ${p.im?`<div class="imgs${set.length===2?' two':''}${zoomed}" id="imgs">${set.filter(j=>D.pages[j].im).map(j=>`<div class="pg"><div class="cap"><b>${esc(D.pages[j].l)}</b> · PDF ${D.pages[j].p}쪽${j===i?'':' (옆 쪽)'}</div><div class="pgwrap">${pageImg(j, boxes(j))}</div></div>`).join('')}</div>`
+        : `<div class="note info">이 페이지는 원본 그림이 없어 추출한 글만 보여줍니다.</div>`}
+      <details ${p.im?'':'open'}><summary>추출한 글 보기</summary><pre class="txt">${hl(p.t.replace(/\n{3,}/g,'\n\n'), re)}</pre></details>
+    </div></div>`;
+  v.hidden = false; v.scrollTop = 0; v.querySelector('.vcard').scrollTop = 0;
+  $('#main').classList.add('has-view');
+  if(matchMedia('(max-width:979px)').matches) document.body.classList.add('viewing');
+  if(spec && p.im){ setTimeout(() => { const b = v.querySelector('.hlb'); if(b && !zoomed){ const w = b.closest('.vcard'); if(w && matchMedia('(min-width:980px)').matches){ const r = b.getBoundingClientRect(), wr = w.getBoundingClientRect(); if(r.top > wr.bottom - 60) w.scrollTop += r.top - wr.top - 200; } } }, 400); }
+  if(!matchMedia('(max-width:979px)').matches){ const t = v.getBoundingClientRect().top; if(t<0 || t>innerHeight) v.scrollIntoView({block:'start'}); }
+  markActive(spec ? S.indexOf(spec) : null);
+  if(nb.next!=null && D.pages[nb.next].im){ const pre = new Image(); pre.src = sheetUrl(D.pages[nb.next].im[0]); }
+}
+function closeView(){ $('#viewer').hidden = true; curView = null; $('#main').classList.remove('has-view'); document.body.classList.remove('viewing'); markActive(); }
+function markActive(si){
+  document.querySelectorAll('.item').forEach(b => b.classList.toggle('on', +b.dataset.i===curView));
+  document.querySelectorAll('tr.r').forEach(r => r.classList.toggle('on', si!=null && +r.dataset.s===si));
+}
+function openRef(file, p){ const i = pageAt(file, p); if(i!=null) openPage(i, false); }
+
+/* ======================= calculators ======================= */
+const BS = '515-1K_15_BallScrew.pdf', LM = 'LM 전체 카다록.pdf', CF = '515-1K_19_CamFollower.pdf', RR = '515-1K_18_CrossRollerRing.pdf';
+const REF = {
+  bs_buckle:[BS,444,'B15-38'], bs_crit:[BS,446,'B15-40'], bs_dn:[BS,447,'B15-41'], bs_life:[BS,454,'B15-48'], bs_time:[BS,455,'B15-49'],
+  bs_ex1:[BS,479,'B15-73'], bs_ex2:[BS,480,'B15-74'], bs_ex3:[BS,482,'B15-76'],
+  lm_fs:[LM,63,'A1-63'], lm_l:[LM,66,'A1-66'], lm_lm:[LM,67,'A1-67'], lm_f:[LM,68,'A1-68'], lm_fw:[LM,69,'A1-69'], lm_ld1:[LM,54,'A1-54'], lm_ld2:[LM,55,'A1-55'], lm_pe:[LM,61,'A1-61'],
+  cf_a:[CF,12,'A19-12'], cf_b:[CF,13,'A19-13'], rr_s:[RR,8,'A18-8'], rr_m:[RR,9,'A18-9'], rr_l:[RR,10,'A18-10'], rr_p:[RR,11,'A18-11']
+};
+const refBtn = k => `<button data-ref="${k}">근거 ${REF[k][2]}</button>`;
+const DN_TABLE = [
+  ['BLK·BLR·WTF·CNF·BNK·BIF·BNF·BNFN·DK·DIK·DKN·MDK·MBF·BNT·DIR·BLW·BNS·NS·WGF (총볼 표준·대리드·슈퍼리드)',70000,/^(BLK|BLR|WTF|CNF|BNK|BIF|BNF|BNFN|DK|DIK|DKN|MDK|MBF|BNT|DIR|BLW|BNS|NS|WGF)$/],
+  ['BIF-V·BNFN-V·BNF-V (중형)',130000,null], ['BIF-V·BNFN-V·BNF-V (소형)',100000,/^(BIF|BNFN|BNF)V$/],
+  ['BNS-V·NS-V',100000,null], ['BTK-V (전조)',100000,/^BTK$/], ['JPF·MTF (전조)',50000,/^(JPF|MTF)$/],
+  ['SDA-V·SDAN-V (볼리테이너)',160000,/^(SDA|SDAN)$/], ['SBN-V(중형)·HBN-V',160000,null], ['SBN-V(소형)·HBN·SBKH',130000,/^(SBN|HBN|SBKH)$/],
+  ['HBN-K·HBN-KA',120000,null], ['SBK 중형 (3636·4040·5050)',210000,null], ['SBK (그 외 중형)·SBKN',160000,/^(SBKN)$/], ['SBK (소형)',130000,/^SBK$/],
+  ['SDAN-VX·SDA-VZ (축경 28~63)',130000,null], ['SDA-VZ (축경 10~25)',100000,null], ['WHF',120000,/^WHF$/]
+];
+function dnGuess(model){
+  const m = model.replace(/\s/g,'').toUpperCase(); const pre = (m.match(/^[A-Z]+/)||[''])[0];
+  const v = /^\D+\d+V/.test(m) ? pre+'V' : pre;
+  let k = DN_TABLE.findIndex(r => r[2] && r[2].test(v)); if(k<0) k = DN_TABLE.findIndex(r => r[2] && r[2].test(pre));
+  return k<0 ? 0 : k;
+}
+function calcFamily(s){
+  const c = D.short[D.pages[s.i].c];
+  if(/볼나사/.test(c)) return ['bs_speed','bs_axial','bs_life'];
+  if(/LM가이드/.test(c) && !/액추에이터/.test(c)) return ['lm_life','lm_static'];
+  if(/캠팔로워/.test(c)) return ['cf'];
+  if(/크로스롤러링/.test(c)) return ['rr'];
+  return [];
+}
+/* auto-fill: find candidate cells in the spec row */
+const PICK = {
+  d1: l => /곡경|\bdc\b/.test(l), Dp: l => /중\s?심경|BCD|\bdp\b/.test(l), Ph: l => /리드|\bPh\b/.test(l),
+  Ca: l => isDyn(l), C0a: l => isSta(l), Ntab: l => /회전/.test(l), C: l => isDyn(l), C0: l => isSta(l),
+  F0: l => /F0/.test(l), Dout: l => /외\s?경/.test(l), dpR: l => /피치\s?원경|\bdp\b/.test(l)
+};
+const CALCS = {
+  bs_speed:{title:'볼나사 허용회전수', sub:'위험속도와 DN값 중 낮은 값', fam:'볼나사',
+    fields:[
+      {id:'model',label:'형번',type:'model'},
+      {id:'d1',label:'나사축 곡경 d1 (mm)',auto:'d1'},
+      {id:'Dp',label:'볼중심경 D (mm)',auto:'Dp'},
+      {id:'lb',label:'장착간 거리 ℓb (mm)',def:1000},
+      {id:'mount',label:'장착 방법',type:'select',opts:[['고정-자유 (λ2=3.4)',3.4],['지지-지지 (λ2=9.7)',9.7],['고정-지지 (λ2=15.1)',15.1],['고정-고정 (λ2=21.9)',21.9]],def:2},
+      {id:'dn',label:'DN값 (형식별, B15-41 표)',type:'select',opts:DN_TABLE.map(r=>[`${r[0]} → ${r[1].toLocaleString()}`, r[1]]),def:0},
+      {id:'Ph',label:'리드 Ph (mm) · 선택',auto:'Ph',opt:true},
+      {id:'V',label:'최고 속도 V (m/s) · 선택',def:'',opt:true},
+      {id:'Ntab',label:'치수표 허용회전수 (min⁻¹) · 참고',auto:'Ntab',opt:true}
+    ],
+    run(v){
+      const st = [];
+      const N1 = v.mount * v.d1 / (v.lb*v.lb) * 1e7;
+      st.push({h:'① 위험속도에 의한 허용회전수 N1', ref:'bs_crit', f:'N1 = λ2 × d1 / ℓb² × 10⁷   (안전계수 0.8 포함)',
+        s:`N1 = ${v.mount} × ${v.d1} / ${v.lb}² × 10⁷`, r:`N1 = ${fmt(N1)} min⁻¹`});
+      const N2 = v.dn / v.Dp;
+      st.push({h:'② DN값에 의한 허용회전수 N2', ref:'bs_dn', f:'N2 = DN값 / D   (D: 볼중심경)', s:`N2 = ${v.dn.toLocaleString()} / ${v.Dp}`, r:`N2 = ${fmt(N2)} min⁻¹`});
+      const Na = Math.min(N1, N2);
+      let ver = `허용회전수 = min(N1, N2) = <b>${fmt(Na)} min⁻¹</b> (${N1<N2?'위험속도':'DN값'} 기준)`;
+      if(isFinite(v.Ntab)) ver += `<br>치수표 허용회전수 ${fmt(v.Ntab)} min⁻¹ 와 비교해 낮은 쪽을 쓰세요.`;
+      let cls = '';
+      if(isFinite(v.V) && isFinite(v.Ph) && v.V>0){
+        const Nmax = v.V*60*1000/v.Ph;
+        st.push({h:'③ 최고 속도에서의 회전수', ref:'bs_ex1', f:'Nmax = V × 60 × 10³ / Ph', s:`Nmax = ${v.V} × 60 × 10³ / ${v.Ph}`, r:`Nmax = ${fmt(Nmax)} min⁻¹`});
+        const lim = isFinite(v.Ntab) ? Math.min(Na, v.Ntab) : Na;
+        cls = Nmax <= lim ? 'ok' : 'bad';
+        ver += `<br>최고 회전수 ${fmt(Nmax)} ${Nmax<=lim?'≤':'>'} 허용 ${fmt(lim)} → <b>${Nmax<=lim?'사용 가능':'초과 (재검토)'}</b>`;
+      }
+      return {st, ver, cls, ex:'catalog 예제(B15-74): λ2=15.1, d1=17.5, ℓb=1100 → N1=2,180 / D=20.75, DN=70,000 → N2=3,370'};
+    }},
+  bs_axial:{title:'볼나사 허용 축방향 하중', sub:'좌굴하중과 허용인장압축하중', fam:'볼나사',
+    fields:[
+      {id:'model',label:'형번',type:'model'},
+      {id:'d1',label:'나사축 곡경 d1 (mm)',auto:'d1'},
+      {id:'la',label:'장착간 거리 ℓa (mm)',def:1000},
+      {id:'mount',label:'장착 방법',type:'select',opts:[['고정-자유 (η2=1.3)',1.3],['고정-지지 (η2=10)',10],['고정-고정 (η2=20)',20]],def:1},
+      {id:'Fakg',label:'최대 축방향 하중 (kg) · 선택',def:'',opt:true,kg:1},
+      {id:'C0a',label:'기본정정격하중 C0a (kN) · 선택',auto:'C0a',opt:true},
+      {id:'fS',label:'정적안전계수 fS · 선택',def:2.5,opt:true}
+    ],
+    run(v){
+      const st = [];
+      const P1 = v.mount * Math.pow(v.d1,4) / (v.la*v.la) * 1e4;
+      st.push({h:'① 나사축의 좌굴하중 P1', ref:'bs_buckle', f:'P1 = η2 × d1⁴ / ℓa² × 10⁴   (안전계수 0.5 포함)', s:`P1 = ${v.mount} × ${v.d1}⁴ / ${v.la}² × 10⁴`, r:`P1 = ${fmt(P1)} N`});
+      const P2 = 116 * v.d1 * v.d1;
+      st.push({h:'② 허용인장압축하중 P2', ref:'bs_buckle', f:'P2 = 116 × d1²', s:`P2 = 116 × ${v.d1}²`, r:`P2 = ${fmt(P2)} N`});
+      let lim = Math.min(P1,P2), ver = `허용 축방향 하중 = min(P1, P2) = <b>${fmt(lim)} N</b>`;
+      if(isFinite(v.C0a) && isFinite(v.fS) && v.fS>0){
+        const P3 = v.C0a*1000 / v.fS;
+        st.push({h:'③ 정적안전계수로 본 허용하중', ref:'bs_ex1', f:'Fa허용 = C0a / fS', s:`= ${v.C0a}×1000 / ${v.fS}`, r:`= ${fmt(P3)} N`});
+        lim = Math.min(lim, P3); ver += `<br>정적안전계수까지 고려하면 <b>${fmt(lim)} N</b>`;
+      }
+      let cls = '';
+      if(isFinite(v.Fa) && v.Fa>0){ cls = v.Fa <= lim ? 'ok' : 'bad'; ver += `<br>최대 축방향 하중 ${fmt(v.Fa)} N ${v.Fa<=lim?'≤':'>'} ${fmt(lim)} N → <b>${v.Fa<=lim?'문제 없음':'초과 (재검토)'}</b>`; }
+      return {st, ver, cls, ex:'catalog 예제(B15-73): η2=20, d1=17.5, ℓa=1100 → P1=15,500 N, P2=35,500 N'};
+    }},
+  bs_life:{title:'볼나사 정격수명', sub:'수명 회전수·시간·주행거리', fam:'볼나사',
+    fields:[
+      {id:'model',label:'형번',type:'model'},
+      {id:'Ca',label:'기본동정격하중 Ca (kN)',auto:'Ca'},
+      {id:'Fakg',label:'축방향 하중 Fa (평균, kg)',def:50,kg:1},
+      {id:'fW',label:'하중계수 fW',type:'select',opts:[['1.0 (미속 V≤0.25 m/s, 1~1.2)',1.0],['1.2 (미속 상한 / 저속 하한)',1.2],['1.5 (저속 0.25<V≤1, 1.2~1.5)',1.5],['2.0 (중속 1<V≤2, 1.5~2)',2.0],['3.5 (고속 V>2, 2~3.5)',3.5]],def:2},
+      {id:'mode',label:'회전수 입력 방식',type:'select',opts:[['분당 회전수 N 직접 입력',0],['왕복 횟수·스트로크로 계산',1]],def:0},
+      {id:'N',label:'분당 회전수 N (min⁻¹)',def:1000,show:v=>v.mode==0},
+      {id:'n',label:'분당 왕복 횟수 n (min⁻¹)',def:8,show:v=>v.mode==1},
+      {id:'ls',label:'스트로크 ℓS (mm)',def:500,show:v=>v.mode==1},
+      {id:'Ph',label:'리드 Ph (mm)',auto:'Ph'}
+    ],
+    run(v){
+      const st = [], a = 1/v.fW;
+      const L = Math.pow(a * v.Ca*1000 / v.Fa, 3) * 1e6;
+      st.push({h:'① 사용 조건을 고려한 정격수명 L10m', ref:'bs_life', f:'L10m = (α × Ca / Fa)³ × 10⁶ rev,   α = 1 / fW',
+        s:`L10m = (1/${v.fW} × ${v.Ca}×1000 / ${v.Fa})³ × 10⁶`, r:`L10m = ${fmt(L)} rev`});
+      let N = v.N;
+      if(v.mode==1){ N = 2*v.n*v.ls/v.Ph; st.push({h:'② 분당 평균 회전수', ref:'bs_ex3', f:'Nm = 2 × n × ℓS / Ph', s:`Nm = 2 × ${v.n} × ${v.ls} / ${v.Ph}`, r:`Nm = ${fmt(N)} min⁻¹`}); }
+      const Lh = L/(60*N);
+      st.push({h:`${v.mode==1?'③':'②'} 수명시간 Lh`, ref:'bs_time', f:'Lh = L10m / (60 × N)', s:`Lh = ${fmt(L)} / (60 × ${fmt(N)})`, r:`Lh = ${fmt(Lh)} h`});
+      const Ls = L*v.Ph/1e6;
+      if(isFinite(v.Ph)) st.push({h:`${v.mode==1?'④':'③'} 주행거리 수명 LS`, ref:'bs_time', f:'LS = L10m × Ph / 10⁶', s:`LS = ${fmt(L)} × ${v.Ph} / 10⁶`, r:`LS = ${fmt(Ls)} km`});
+      return {st, ver:`정격수명 <b>${fmt(L)} rev</b> · 수명시간 <b>${fmt(Lh)} h</b>${isFinite(Ls)?` · 주행거리 <b>${fmt(Ls)} km</b>`:''}<br><span class="hint">예압이 걸린 볼나사는 예압하중을 고려해야 하므로 삼익THK 문의가 필요합니다 (B15-49).</span>`,
+        ex:'catalog 예제(B15-76·77): Ca=5,400 N, Fa=225 N, fW=1.5 → L10m=4.1×10⁹ rev, Nm=400 → Lh≈171,000 h'};
+    }},
+  lm_life:{title:'LM가이드 정격수명', sub:'주행거리 수명과 수명시간', fam:'LM가이드',
+    fields:[
+      {id:'model',label:'형번',type:'model'},
+      {id:'C',label:'기본동정격하중 C (kN)',auto:'C'},
+      {id:'kind',label:'전동체',type:'select',opts:[['볼 (기준 50 km, 지수 3)',0],['롤러 (기준 100 km, 지수 10/3)',1]],def:0},
+      {id:'lmode',label:'하중 입력 방식',type:'select',opts:[['전체 무게 ÷ 블록 개수',0],['블록 1개당 무게',1],['무게중심 위치로 블록별 계산 (치우친 하중)',2]],def:0},
+      {id:'Wt',label:'테이블+적재물 전체 무게 (kg)',def:400,show:v=>v.lmode==0,kg:1},
+      {id:'nb',label:'블록 개수',def:4,show:v=>v.lmode==0},
+      {id:'Pkg',label:'블록 1개당 하중 (kg)',def:100,show:v=>v.lmode==1,kg:1},
+      {id:'pose',label:'장착 자세 (레일 2줄 · 블록 4개)',type:'select',opts:[['수평 (바닥 장착)',0],['수직축',1],['벽면 부착 횡사용',2]],def:0,show:v=>v.lmode==2},
+      {id:'Wm',label:'무게 m (kg)',def:300,show:v=>v.lmode==2,kg:1},
+      {id:'l0',label:'블록 간격 ℓ0 (mm)',def:200,show:v=>v.lmode==2},
+      {id:'l1',label:'레일 간격 ℓ1 (mm)',def:300,show:v=>v.lmode==2},
+      {id:'l2',label:'무게중심 위치 ℓ2 (mm)',def:50,show:v=>v.lmode==2},
+      {id:'l3',label:'무게중심 위치 ℓ3 (mm)',def:30,show:v=>v.lmode==2},
+      {id:'fH',label:'경도계수 fH',def:1.0},
+      {id:'fT',label:'온도계수 fT (100℃ 이하 1.0)',def:1.0},
+      {id:'fC',label:'접촉계수 fC (밀착 블록 수)',type:'select',opts:[['통상 사용 1.0',1],['2개 밀착 0.81',0.81],['3개 밀착 0.72',0.72],['4개 밀착 0.66',0.66],['5개 밀착 0.61',0.61],['6개 이상 0.6',0.6]],def:0},
+      {id:'fW',label:'하중계수 fW',type:'select',opts:[['1.0 (미속 V≤0.25 m/s, 1~1.2)',1.0],['1.2 (미속 상한 / 저속 하한)',1.2],['1.5 (저속 0.25<V≤1, 1.2~1.5)',1.5],['2.0 (중속 1<V≤2, 1.5~2)',2.0],['3.5 (고속 V>2, 2~3.5)',3.5]],def:1},
+      {id:'ls',label:'스트로크 ℓS (mm) · 수명시간용',def:500,opt:true},
+      {id:'n1',label:'분당 왕복 횟수 n1 (min⁻¹) · 수명시간용',def:10,opt:true}
+    ],
+    run(v){
+      const st = [], a = v.fH*v.fT*v.fC/v.fW, ex = v.kind==1 ? 10/3 : 3, base = v.kind==1 ? 100 : 50;
+      st.push({h:'① 사용 조건을 고려한 계수 α', ref:'lm_lm', f:'α = fH × fT × fC / fW', s:`α = ${v.fH} × ${v.fT} × ${v.fC} / ${v.fW}`, r:`α = ${fmt(a)}`});
+      const L = Math.pow(a * v.C*1000 / v.Pc, ex) * base;
+      st.push({h:'② 정격수명 L10m (주행거리)', ref: 'lm_lm', f:`L10m = (α × C / PC)${v.kind==1?'^(10/3)':'³'} × ${base} km`, s:`L10m = (${fmt(a)} × ${v.C}×1000 / ${v.Pc})${v.kind==1?'^(10/3)':'³'} × ${base}`, r:`L10m = ${fmt(L)} km`});
+      let ver = `정격수명 <b>${fmt(L)} km</b>`;
+      if(isFinite(v.ls) && isFinite(v.n1) && v.ls>0 && v.n1>0){
+        const Lh = L*1e6/(2*v.ls*v.n1*60);
+        st.push({h:'③ 수명시간 Lh', ref:'lm_lm', f:'Lh = L10m × 10⁶ / (2 × ℓS × n1 × 60)', s:`Lh = ${fmt(L)} × 10⁶ / (2 × ${v.ls} × ${v.n1} × 60)`, r:`Lh = ${fmt(Lh)} h`});
+        ver += ` · 수명시간 <b>${fmt(Lh)} h</b>`;
+      }
+      ver += `<br><span class="hint">PC는 블록 1개에 걸리는 하중입니다. 모멘트가 걸리면 등가하중으로 환산해야 합니다 (A1-46~). 스트로크가 블록 길이의 2배 이하이면 이 식이 맞지 않을 수 있습니다 (A1-66).</span>`;
+      return {st, ver};
+    }},
+  lm_static:{title:'LM가이드 정적안전계수', sub:'최대 하중에 대한 여유', fam:'LM가이드',
+    fields:[
+      {id:'model',label:'형번',type:'model'},
+      {id:'C0',label:'기본정정격하중 C0 (kN)',auto:'C0'},
+      {id:'lmode',label:'하중 입력 방식',type:'select',opts:[['전체 무게 ÷ 블록 개수',0],['블록 1개당 무게',1],['무게중심 위치로 블록별 계산 (치우친 하중)',2]],def:0},
+      {id:'Wt',label:'최대 전체 무게 (kg, 충격 포함)',def:800,show:v=>v.lmode==0,kg:1},
+      {id:'nb',label:'블록 개수',def:4,show:v=>v.lmode==0},
+      {id:'Pkg',label:'블록 1개당 최대 하중 (kg)',def:200,show:v=>v.lmode==1,kg:1},
+      {id:'pose',label:'장착 자세 (레일 2줄 · 블록 4개)',type:'select',opts:[['수평 (바닥 장착)',0],['수직축',1],['벽면 부착 횡사용',2]],def:0,show:v=>v.lmode==2},
+      {id:'Wm',label:'최대 무게 m (kg, 충격 포함)',def:600,show:v=>v.lmode==2,kg:1},
+      {id:'l0',label:'블록 간격 ℓ0 (mm)',def:200,show:v=>v.lmode==2},
+      {id:'l1',label:'레일 간격 ℓ1 (mm)',def:300,show:v=>v.lmode==2},
+      {id:'l2',label:'무게중심 위치 ℓ2 (mm)',def:50,show:v=>v.lmode==2},
+      {id:'l3',label:'무게중심 위치 ℓ3 (mm)',def:30,show:v=>v.lmode==2},
+      {id:'fH',label:'경도계수 fH',def:1.0},
+      {id:'fT',label:'온도계수 fT',def:1.0},
+      {id:'fC',label:'접촉계수 fC',type:'select',opts:[['통상 사용 1.0',1],['2개 밀착 0.81',0.81],['3개 밀착 0.72',0.72],['4개 밀착 0.66',0.66],['5개 밀착 0.61',0.61],['6개 이상 0.6',0.6]],def:0},
+      {id:'use',label:'사용 기계 / 하중 조건',type:'select',opts:[['일반 산업기계 · 진동·충격 없음 (1.0~3.5)',1.0],['일반 산업기계 · 진동·충격 있음 (2.0~5.0)',2.0],['공작기계 · 진동·충격 없음 (1.0~4.0)',1.0],['공작기계 · 진동·충격 있음 (2.5~7.0)',2.5]],def:0}
+    ],
+    run(v){
+      const fs = v.fH*v.fT*v.fC*v.C0*1000/v.P;
+      const st = [{h:'정적안전계수 fS (레이디얼 방향)', ref:'lm_fs', f:'fS = fH × fT × fC × C0 / P', s:`fS = ${v.fH} × ${v.fT} × ${v.fC} × ${v.C0}×1000 / ${v.P}`, r:`fS = ${fmt(fs)}`}];
+      const ok = fs >= v.use;
+      return {st, cls: ok?'ok':'bad', ver:`fS = <b>${fmt(fs)}</b> → 하한 기준 ${v.use} 이상이면 사용 가능 · <b>${ok?'기준 충족':'기준 미달'}</b><br><span class="hint">표9 기준값은 범위로 주어집니다. 역레이디얼·횡방향 하중이 크면 해당 방향의 C0L·C0T로 계산합니다 (A1-63).</span>`};
+    }},
+  cf:{title:'캠팔로워 수명·안전계수', sub:'정격수명·정적안전계수', fam:'캠팔로워',
+    fields:[
+      {id:'model',label:'형번',type:'model'},
+      {id:'C',label:'기본동정격하중 C (kN)',auto:'C'},
+      {id:'C0',label:'기본정정격하중 C0 (kN)',auto:'C0'},
+      {id:'F0',label:'최대 허용하중 F0 (kN)',auto:'F0',opt:true},
+      {id:'Pkg',label:'레이디얼 하중 (kg)',def:100,kg:1},
+      {id:'fT',label:'온도계수 fT (80℃ 이하 1.0)',def:1.0},
+      {id:'fW',label:'하중계수 fW',type:'select',opts:[['1.0 (충격없는 부드러운 운동, 1~1.2)',1.0],['1.2',1.2],['1.5 (보통 운동, 1.2~1.5)',1.5],['3.0 (심한 충격, 1.5~3)',3.0]],def:1},
+      {id:'mode',label:'운동 형태',type:'select',opts:[['직선 운동',0],['회전 운동 (캠)',1]],def:0},
+      {id:'Dout',label:'캠팔로워 외경 D (mm)',auto:'Dout'},
+      {id:'ls',label:'스트로크 ℓS (mm)',def:500,show:v=>v.mode==0},
+      {id:'n1',label:'분당 왕복 횟수 n1 (min⁻¹)',def:10,show:v=>v.mode==0},
+      {id:'D1',label:'캠의 외륜접촉 평균직경 D1 (mm)',def:200,show:v=>v.mode==1},
+      {id:'n',label:'캠의 분당 회전수 n (min⁻¹)',def:30,show:v=>v.mode==1}
+    ],
+    run(v){
+      const st = [];
+      const fs = v.C0/v.P;
+      st.push({h:'① 정적안전계수 fS', ref:'cf_a', f:'fS = C0 / P0', s:`fS = ${v.C0} / ${v.P}`, r:`fS = ${fmt(fs)}`});
+      let fm = NaN;
+      if(isFinite(v.F0)){ fm = v.F0/v.P; st.push({h:'② 허용하중에 대한 안전계수 fM', ref:'cf_a', f:'fM = F0 / P0', s:`fM = ${v.F0} / ${v.P}`, r:`fM = ${fmt(fm)}`}); }
+      const a = v.fT/v.fW, L = Math.pow(a*v.C/v.P, 10/3)*1e6;
+      st.push({h:'③ 정격수명 L10m', ref:'cf_b', f:'L10m = (α × C / P)^(10/3) × 10⁶ rev,   α = fT / fW', s:`L10m = (${v.fT}/${v.fW} × ${v.C} / ${v.P})^(10/3) × 10⁶`, r:`L10m = ${fmt(L)} rev`});
+      let Lh;
+      if(v.mode==0){ Lh = v.Dout*Math.PI*L/(2*v.ls*v.n1*60); st.push({h:'④ 수명시간 (직선 운동)', ref:'cf_b', f:'Lh = D × π × L10m / (2 × ℓS × n1 × 60)', s:`Lh = ${v.Dout} × π × ${fmt(L)} / (2 × ${v.ls} × ${v.n1} × 60)`, r:`Lh = ${fmt(Lh)} h`}); }
+      else { Lh = v.Dout*L/(v.D1*v.n*60); st.push({h:'④ 수명시간 (회전 운동)', ref:'cf_b', f:'Lh = D × L10m / (D1 × n × 60)', s:`Lh = ${v.Dout} × ${fmt(L)} / (${v.D1} × ${v.n} × 60)`, r:`Lh = ${fmt(Lh)} h`}); }
+      const ok = fs>=1 && (!isFinite(fm) || fm>=1);
+      return {st, cls: ok?'ok':'bad', ver:`fS ${fmt(fs)}${isFinite(fm)?` · fM ${fmt(fm)}`:''} (하한: 보통하중 1~2, 충격하중 2~3) · 수명 <b>${fmt(L)} rev</b> · <b>${fmt(Lh)} h</b><br><span class="hint">총니들 타입은 표의 총니들 C·C0 값을 고르세요.</span>`};
+    }},
+  rr:{title:'크로스롤러링 수명·안전계수', sub:'동등가하중·수명·정적안전계수', fam:'크로스롤러링',
+    fields:[
+      {id:'model',label:'형번',type:'model'},
+      {id:'C',label:'기본동정격하중 C (kN)',auto:'C'},
+      {id:'C0',label:'기본정정격하중 C0 (kN)',auto:'C0'},
+      {id:'dpR',label:'롤러 피치 원경 dp (mm)',auto:'dpR'},
+      {id:'Frkg',label:'레이디얼 하중 Fr (kg)',def:100,kg:1},
+      {id:'Fakg',label:'축방향 하중 Fa (kg)',def:100,kg:1},
+      {id:'M',label:'모멘트 M (N·mm)',def:0},
+      {id:'fT',label:'온도계수 fT',def:1.0},
+      {id:'fW',label:'하중계수 fW',type:'select',opts:[['1.0 (충격 없는 원활한 운동, 1~1.2)',1.0],['1.2',1.2],['1.5 (보통 운동, 1.2~1.5)',1.5],['3.0 (진동·충격 심함, 1.5~3)',3.0]],def:1},
+      {id:'mode',label:'운동 형태',type:'select',opts:[['회전 운동',0],['요동 운동',1]],def:0},
+      {id:'N',label:'분당 회전수 N (min⁻¹)',def:10,show:v=>v.mode==0},
+      {id:'th',label:'요동 각도 θ (°)',def:90,show:v=>v.mode==1},
+      {id:'n0',label:'분당 왕복 횟수 n0 (min⁻¹)',def:10,show:v=>v.mode==1}
+    ],
+    run(v){
+      const st = [], base = v.Fr + 2*v.M/v.dpR;
+      let X, Y; if(v.Fr===0 && v.M===0){ X=0.67; Y=0.67; } else if(v.Fa/base <= 1.5){ X=1; Y=0.45; } else { X=0.67; Y=0.67; }
+      const Pc = X*base + Y*v.Fa;
+      st.push({h:'① 동등가 레이디얼 하중 PC', ref:'rr_p', f:'PC = X × (Fr + 2M/dp) + Y × Fa   (Fa/(Fr+2M/dp) ≤ 1.5 → X=1, Y=0.45 / 초과 → X=Y=0.67)',
+        s:`Fa/(Fr+2M/dp) = ${v.Fa}/${fmt(base)} = ${fmt(v.Fa/base)} → X=${X}, Y=${Y};  PC = ${X} × ${fmt(base)} + ${Y} × ${v.Fa}`, r:`PC = ${fmt(Pc)} N`});
+      const a = v.fT/v.fW, L = Math.pow(a*v.C*1000/Pc, 10/3)*1e6;
+      st.push({h:'② 정격수명 L10m', ref:'rr_l', f:'L10m = (α × C / PC)^(10/3) × 10⁶ rev,   α = fT / fW', s:`L10m = (${v.fT}/${v.fW} × ${v.C}×1000 / ${fmt(Pc)})^(10/3) × 10⁶`, r:`L10m = ${fmt(L)} rev`});
+      let Lh;
+      if(v.mode==0){ Lh = L/(v.N*60); st.push({h:'③ 수명시간 (회전)', ref:'rr_p', f:'Lh = L10m / (N × 60)', s:`Lh = ${fmt(L)} / (${v.N} × 60)`, r:`Lh = ${fmt(Lh)} h`}); }
+      else { Lh = 360*L/(2*v.th*v.n0*60); st.push({h:'③ 수명시간 (요동)', ref:'rr_p', f:'Lh = 360 × L10m / (2 × θ × n0 × 60)', s:`Lh = 360 × ${fmt(L)} / (2 × ${v.th} × ${v.n0} × 60)`, r:`Lh = ${fmt(Lh)} h`}); }
+      const P0 = v.Fr + 2*v.M/v.dpR + 0.44*v.Fa, fs = v.C0*1000/P0;
+      st.push({h:'④ 정적안전계수 fS', ref:'rr_s', f:'P0 = Fr + 2M/dp + 0.44 × Fa,   fS = C0 / P0', s:`P0 = ${v.Fr} + 2×${v.M}/${v.dpR} + 0.44×${v.Fa} = ${fmt(P0)} N;  fS = ${v.C0}×1000 / ${fmt(P0)}`, r:`fS = ${fmt(fs)}`});
+      const M0 = v.C0*v.dpR/2*1e-3, Fa0 = v.C0/0.44;
+      st.push({h:'⑤ 정적허용모멘트 M0 · 정적허용 축방향하중 Fa0', ref:'rr_m', f:'M0 = C0 × dp / 2 × 10⁻³ (kN·m),   Fa0 = C0 / 0.44 (kN)', s:`M0 = ${v.C0} × ${v.dpR} / 2 × 10⁻³;  Fa0 = ${v.C0} / 0.44`, r:`M0 = ${fmt(M0)} kN·m,  Fa0 = ${fmt(Fa0)} kN`});
+      const ok = fs >= 2;
+      return {st, cls: ok?'ok':'bad', ver:`수명 <b>${fmt(L)} rev</b> · <b>${fmt(Lh)} h</b> · fS <b>${fmt(fs)}</b> (하한: 진동·충격 없음 2 / 있음 5, 권장 7 이상)<br><span class="hint">요동각이 작거나 예압 제품이면 삼익THK 문의가 필요합니다 (A18-10·11).</span>`};
+    }}
+};
+
+const CALC_GUIDE = {
+  bs_speed:{when:'이 볼나사, 몇 rpm까지 돌려도 되나?', inp:'장착간 거리, 장착 방법(고정-고정·고정-지지 등), DN값(나사 형식)', res:'위험속도와 DN값으로 각각 나옵니다. <b>둘 중 낮은 쪽</b>이 실제 한계입니다. 최고 속도(m/s)를 넣으면 필요한 회전수도 같이 나옵니다.'},
+  bs_axial:{when:'축이 휘거나(좌굴) 끊어지지 않나?', inp:'장착간 거리, 장착 방법', res:'좌굴하중과 허용 인장·압축하중이 나옵니다. 최대 축하중을 넣으면 함께 비교됩니다.'},
+  bs_life:{when:'몇 시간, 몇 km 쓸 수 있나?', inp:'축방향 하중(<b>kg</b>), 하중계수 fW(속도 구간 선택), 회전수 — 회전수를 모르면 「왕복 횟수·스트로크로 계산」 선택', res:'수명 회전수, 수명 시간, 주행거리'},
+  lm_life:{when:'LM가이드를 몇 km 쓸 수 있나?', inp:'전체 무게(<b>kg</b>)와 블록 개수 — 또는 블록 1개당 무게, 하중이 한쪽으로 치우쳐 있으면 「무게중심 위치로 블록별 계산」, 전동체(볼/롤러), 접촉계수(블록 밀착 개수), fW', res:'주행거리 수명(km). 스트로크와 분당 왕복 횟수를 넣으면 수명 시간도 나옵니다.'},
+  lm_static:{when:'충격이나 최대 하중에 여유가 있나?', inp:'최대 전체 무게(<b>kg</b>)와 블록 개수 — 또는 블록 1개당 무게, 치우친 하중은 「무게중심 위치로 블록별 계산」, 사용 기계·조건(일반 산업기계/공작기계, 충격 유무)', res:'fS가 선택지 괄호 안의 <b>권장 범위</b>(예: 1.0~3.5) 안에 들거나 그보다 크면 됩니다.'},
+  cf:{when:'캠팔로워 수명과 여유는?', inp:'레이디얼 하중(<b>kg</b>), 운동 형태 — 직선이면 스트로크·왕복 횟수, 캠 회전이면 캠 직경·회전수', res:'수명 시간, 정적안전계수. 하중이 최대 허용하중 F0를 넘는지도 확인하세요.'},
+  rr:{when:'크로스롤러링 수명과 여유는?', inp:'레이디얼 하중(<b>kg</b>), 축방향 하중(<b>kg</b>), 모멘트(<b>N·mm</b>), 운동 형태 — 회전이면 회전수, 요동이면 각도·분당 왕복 횟수', res:'등가하중, 수명, 정적안전계수'}
+};
+const CALC_TIP = {
+  'lm_life.pose':'그림은 계산 과정의 「근거 A1-54·55」에서 확인', 'lm_static.pose':'그림은 계산 과정의 「근거 A1-54·55」에서 확인',
+  'lm_life.l0':'같은 레일 위 블록 2개의 중심 간격', 'lm_static.l0':'같은 레일 위 블록 2개의 중심 간격', 'lm_life.l1':'레일 2줄의 중심 간격', 'lm_static.l1':'레일 2줄의 중심 간격',
+  'lm_life.l2':'수평·벽면: 테이블 중심에서 레일 방향 편심 / 수직축: 레일면에서 무게중심까지', 'lm_static.l2':'수평·벽면: 테이블 중심에서 레일 방향 편심 / 수직축: 레일면에서 무게중심까지',
+  'lm_life.l3':'수평: 레일 직각 방향 편심 / 수직축: 좌우 편심 / 벽면: 레일면에서 무게중심까지', 'lm_static.l3':'수평: 레일 직각 방향 편심 / 수직축: 좌우 편심 / 벽면: 레일면에서 무게중심까지',
+  'lm_life.Wt':'테이블·지그·적재물을 모두 더한 무게', 'lm_static.Wt':'테이블·지그·적재물 + 충격까지 고려한 최대값',
+  'lm_life.nb':'레일 2줄 × 블록 2개면 4', 'lm_static.nb':'레일 2줄 × 블록 2개면 4',
+  'lm_life.fH':'모르면 1.0 그대로', 'lm_life.fT':'모르면 1.0 그대로', 'lm_static.fH':'모르면 1.0 그대로', 'lm_static.fT':'모르면 1.0 그대로',
+  'lm_life.fC':'블록을 붙여서(밀착) 쓸 때만 개수 선택', 'lm_static.fC':'블록을 붙여서(밀착) 쓸 때만 개수 선택',
+  'cf.fT':'모르면 1.0 그대로',
+  'rr.M':'N·mm 단위 (N·m × 1,000)', 'rr.fT':'모르면 1.0 그대로'
+};
+function calcGuideHtml(id){
+  const g = CALC_GUIDE[id]; if(!g) return '';
+  return `<div class="cguide"><div><span>이럴 때</span><p>${g.when}</p></div><div><span>넣을 값</span><p>${g.inp}</p></div><div><span>결과 보는 법</span><p>${g.res}</p></div><div class="cgfoot">형번을 넣으면 카탈로그 값은 자동으로 채워집니다(「표에서 읽음」). 사내 검토·결재용으로는 아래 「PDF로 저장」을 쓰면 공식·대입 과정·근거 페이지가 함께 담깁니다.</div></div>`;
+}
+function calcTip(f){ const t = CALC_TIP[calcState.id+'.'+f.id]; return t ? ` <span class="ftip">${esc(t)}</span>` : ''; }
+const G = 9.80665, KN_SHOW = ['C','C0','Ca','C0a','F0'];
+const kgfmt = x => Math.round(x).toLocaleString();
+function blockKg(v){ return v.lmode==0 ? v.Wt / v.nb : v.Pkg; }
+function deriveLoads(id, v){
+  const N = kg => Math.round(kg * G);
+  if(id==='bs_axial' || id==='bs_life') v.Fa = N(v.Fakg);
+  if(id==='lm_life') v.Pc = v.lmode==2 ? ldLoad(id, v) : N(blockKg(v));
+  if(id==='lm_static') v.P = v.lmode==2 ? ldLoad(id, v) : N(blockKg(v));
+  if(id==='cf') v.P = Math.round(v.Pkg * G) / 1000;
+  if(id==='rr'){ v.Fr = N(v.Frkg); v.Fa = N(v.Fakg); }
+}
+function ldLoad(id, v){ if(![v.Wm,v.l0,v.l1,v.l2,v.l3].every(isFinite) || v.l0<=0 || v.l1<=0 || v.Wm<=0) return NaN; const ld = loadDistribution(id, v); v._ld = ld; return Math.round(ld.eq[ld.mx]); }
+function convStep(id, v){
+  if((id==='lm_life' || id==='lm_static') && v.lmode==2) return ldSteps(id, v);
+  if(id==='lm_life' || id==='lm_static'){
+    const P = id==='lm_life' ? v.Pc : v.P, kg = blockKg(v);
+    return v.lmode==0
+      ? {h:'블록 1개당 하중 (kg → N)', f:'P = 전체 무게 ÷ 블록 개수 × 9.81', s:`P = ${v.Wt} kg ÷ ${v.nb} × 9.81 = ${kgfmt(kg)} kg × 9.81`, r:`P = ${P.toLocaleString()} N`}
+      : {h:'블록 1개당 하중 (kg → N)', f:'P = 무게 × 9.81', s:`P = ${v.Pkg} kg × 9.81`, r:`P = ${P.toLocaleString()} N`};
+  }
+  if(id==='bs_life' || (id==='bs_axial' && isFinite(v.Fa) && v.Fa>0)) return {h:'축방향 하중 (kg → N)', f:'Fa = 무게 × 9.81', s:`Fa = ${v.Fakg} kg × 9.81`, r:`Fa = ${v.Fa.toLocaleString()} N`};
+  if(id==='cf') return {h:'레이디얼 하중 (kg → kN)', f:'P = 무게 × 9.81 / 1000', s:`P = ${v.Pkg} kg × 9.81 / 1000`, r:`P = ${v.P} kN`};
+  if(id==='rr') return {h:'하중 환산 (kg → N)', f:'F = 무게 × 9.81', s:`Fr = ${v.Frkg} kg × 9.81,  Fa = ${v.Fakg} kg × 9.81`, r:`Fr = ${v.Fr.toLocaleString()} N,  Fa = ${v.Fa.toLocaleString()} N`};
+  return null;
+}
+function updateConv(c, v){
+  c.fields.forEach(f => {
+    const el = document.getElementById('cv-'+f.id); if(!el) return;
+    const x = v[f.id]; if(!isFinite(x)){ el.textContent = ''; return; }
+    if(KN_SHOW.includes(f.id)){ el.textContent = `≈ ${kgfmt(x*1000/G)} kg`; return; }
+    if(f.id==='Wm'){ el.textContent = `= ${Math.round(x*G).toLocaleString()} N (전체 무게, 블록별 하중은 계산 과정 ①)`; return; }
+    if(f.id==='Wt'){ const kg = x / v.nb; el.textContent = isFinite(kg) ? `블록 1개당 ${kgfmt(kg)} kg = ${Math.round(kg*G).toLocaleString()} N (계산에 사용)` : ''; return; }
+    if(calcState.id==='cf') { el.textContent = `= ${(Math.round(x*G)/1000).toLocaleString()} kN (계산에 사용)`; return; }
+    el.textContent = `= ${Math.round(x*G).toLocaleString()} N (계산에 사용)`;
+  });
+}
+let calcState = {id:'bs_speed', vals:{}, spec:null, src:{}};
+function specsByModel(text, fam){
+  if(!S || !text) return [];
+  const z = text.replace(/\s/g,'').toUpperCase();
+  return S.filter(s => s.z.replace(/[^A-Z0-9.\-]/g,'').startsWith(z.replace(/[^A-Z0-9.\-]/g,'')) && calcFamily(s).some(c => CALCS[c].fam===fam)).slice(0,40);
+}
+function renderCalcPicker(){
+  return `<div class="cpick">${Object.entries(CALCS).map(([k,c])=>`<button data-cp="${k}" class="${calcState.id===k?'on':''}"><b>${esc(c.title)}</b><span>${esc(c.sub)}</span></button>`).join('')}</div>`;
+}
+function renderCalc(){
+  const c = CALCS[calcState.id], v = calcState.vals;
+  const spec = calcState.spec;
+  const cands = specsByModel(v.model || '', c.fam);
+  let h = `<div>${renderCalcPicker()}</div><div class="panel"><h2>${esc(c.title)}</h2>${calcGuideHtml(calcState.id)}<div class="form">`;
+  c.fields.forEach(f => {
+    if(f.show && !f.show(numVals())) return;
+    const id = 'cf-'+f.id;
+    if(f.type==='model'){
+      h += `<div class="fld wide"><label for="${id}">${esc(f.label)} <span class="hint">(입력하면 표에서 값을 자동으로 채웁니다)</span></label><input id="${id}" data-f="model" value="${esc(v.model||'')}" placeholder="예: ${c.fam==='볼나사'?'BLK2525-3.6':c.fam==='LM가이드'?'HSR25C':c.fam==='캠팔로워'?'CF10':'RB2008'}" list="cf-models" autocomplete="off">
+        ${cands.length?`<select id="cf-row" data-f="row" style="margin-top:6px">${cands.map((s,k)=>`<option value="${S.indexOf(s)}" ${spec===s?'selected':''}>${esc(s.m)} — ${esc(D.short[D.pages[s.i].c])} ${esc(D.pages[s.i].l)}</option>`).join('')}</select>`:(v.model?`<div class="src">표에서 이 형번을 찾지 못했습니다. 값을 직접 입력하세요.</div>`:'')}</div>`;
+      return;
+    }
+    if(f.type==='select'){
+      h += `<div class="fld"><label for="${id}">${esc(f.label)}${calcTip(f)}</label><select id="${id}" data-f="${f.id}">${f.opts.map((o,k)=>`<option value="${k}" ${(v[f.id]??f.def)==k?'selected':''}>${esc(o[0])}</option>`).join('')}</select></div>`;
+      return;
+    }
+    const src = calcState.src[f.id];
+    let srcHtml = '';
+    if(f.auto && src){
+      const alt = src.alts && src.alts.length>1 ? `<select data-alt="${f.id}" style="height:30px;margin-top:4px;font-size:12px">${src.alts.map((a,k)=>`<option value="${k}" ${k===src.k?'selected':''}>${esc(a[0])} = ${esc(a[1])}</option>`).join('')}</select>` : '';
+      srcHtml = `<div class="src">표에서 읽음: 「${esc(src.label)}」 · <button data-srow="1">${esc(src.lab)} 보기</button></div>${alt}`;
+    } else if(f.auto) srcHtml = `<div class="src">직접 입력</div>`;
+    h += `<div class="fld${f.auto&&src?' auto':''}"><label for="${id}">${esc(f.label)}${calcTip(f)}</label><input id="${id}" data-f="${f.id}" inputmode="decimal" value="${esc(v[f.id] ?? f.def ?? '')}">${srcHtml}${(f.kg||KN_SHOW.includes(f.id))?`<div class="conv" id="cv-${f.id}"></div>`:''}</div>`;
+  });
+  h += `</div></div><div id="calc-out"></div>${poHtml()}`;
+  $('#calc').innerHTML = h;
+  computeCalc();
+}
+function numVals(){
+  const c = CALCS[calcState.id], out = {};
+  c.fields.forEach(f => {
+    const raw = calcState.vals[f.id] ?? f.def;
+    if(f.type==='select') out[f.id] = f.opts[raw ?? f.def][1];
+    else if(f.type==='model') out[f.id] = raw;
+    else out[f.id] = (raw===''||raw==null) ? NaN : num(raw);
+    if(f.id==='mode') out.mode = raw ?? f.def;
+  });
+  deriveLoads(calcState.id, out);
+  return out;
+}
+function computeCalc(){
+  const c = CALCS[calcState.id], v = numVals();
+  const need = c.fields.filter(f => f.type!=='model' && f.type!=='select' && !f.opt && (!f.show || f.show(v)));
+  const miss = need.filter(f => !isFinite(v[f.id]) || v[f.id]<=0 && !['M','Fakg','Frkg','l2','l3'].includes(f.id));
+  const out = $('#calc-out'); if(!out) return;
+  updateConv(c, v);
+  calcState.last = null; const pob = $('#calc-pdf'); if(pob) pob.hidden = true;
+  if(miss.length){ out.innerHTML = `<div class="note">입력이 필요합니다: ${esc(miss.map(f=>f.label).join(', '))}</div>`; return; }
+  let r; try{ r = c.run(v); }catch(e){ out.innerHTML = `<div class="note">계산할 수 없습니다: ${esc(e.message)}</div>`; return; }
+  const cs = convStep(calcState.id, v); if(cs) r.st.unshift(...[].concat(cs));
+  calcState.last = {r}; if(pob) pob.hidden = false;
+  out.innerHTML = `<div class="verdict ${r.cls||''}">${r.ver}</div>
+    <div class="steps">${r.st.map((s,k)=>`<div class="step"><h4><span>${'①②③④⑤⑥⑦⑧⑨'[k]} ${esc(s.h.replace(/^[①-⑨]\s*/,''))}</span>${s.ref?refBtn(s.ref):''}</h4><div class="why">공식</div><div class="eq">${s.f}</div><div class="why">대입</div><div class="eq">${s.s}</div><div class="eq res">${s.r}</div></div>`).join('')}</div>
+    ${r.ex?`<p class="hint" style="margin:0">검산용 카탈로그 예제: ${esc(r.ex)}</p>`:''}`;
+}
+function fillFromSpec(s){
+  const c = CALCS[calcState.id];
+  calcState.spec = s; calcState.src = {};
+  if(!s) return;
+  const cells = cellsOf(s);
+  c.fields.forEach(f => {
+    if(!f.auto) return;
+    const alts = cells.filter(([l]) => PICK[f.auto](l));
+    if(!alts.length) return;
+    calcState.vals[f.id] = String(num(alts[0][1]));
+    calcState.src[f.id] = {label: alts[0][0], lab: D.pages[s.i].l + (s.pc && s.pc.some(x=>x===alts[0])?` · ${D.pages[s.pi].l}`:''), alts, k:0};
+  });
+  if(calcState.id==='bs_speed'){ calcState.vals.dn = dnGuess(s.m); }
+  if(calcState.id==='lm_life'){ calcState.vals.kind = /^(SRG|SRN|SRW)/.test(s.z) ? 1 : 0; }
+}
+function openCalc(id, si){
+  calcState.id = id; calcState.vals = {}; calcState.spec = null; calcState.src = {};
+  if(si!=null){ const s = S[si]; calcState.vals.model = s.m; fillFromSpec(s); }
+  setTab('calc'); renderCalc();
+}
+function setTab(t){
+  $('#t-search').classList.toggle('on', t==='search'); $('#t-calc').classList.toggle('on', t==='calc'); $('#t-dec').classList.toggle('on', t==='dec');
+  $('#results').hidden = t!=='search'; $('#calc').hidden = t!=='calc'; $('#dec').hidden = t!=='dec'; $('#qrow').hidden = t!=='search';
+  if(t==='calc' && !$('#calc').innerHTML) renderCalc();
+  if(t==='dec' && !$('#dec').innerHTML) renderDec();
+  closeView();
+}
+
+
+/* ===== 계산 결과 PDF 저장 ===== */
+const REF_NAME = {[BS]:'THK 볼나사 카탈로그', [LM]:'THK LM가이드 카탈로그', [CF]:'THK 캠팔로워 카탈로그', [RR]:'THK 크로스롤러링 카탈로그'};
+const PO = {cust:'', proj:'', man:''};
+try{ PO.man = localStorage.getItem('thk-po-man') || ''; }catch(e){}
+const MAIL = "adam@bearings.co.kr";
+const HAS_RT = !!(window.claude && window.claude.use);
+function poHtml(){
+  const f = [['cust','고객사명'],['proj','프로젝트명'],['man','작성자']];
+  return `<div class="pdfout" id="calc-pdf" hidden><h3>PDF로 저장 <span class="hint">계산 검토서 — 비워 둔 칸은 빈칸으로 나옵니다</span></h3><div class="form">${f.map(([k,l])=>`<div class="fld"><label for="po-${k}">${l}</label><input id="po-${k}" data-po="${k}" value="${esc(PO[k])}" autocomplete="off"></div>`).join('')}</div><div class="porow"><button type="button" class="pobtn" id="po-btn">PDF로 저장</button><button type="button" id="po-reply">견적 문의</button><span class="hint" id="po-msg">${HAS_RT?'':'인쇄 창이 뜨면 대상(프린터)을 「PDF로 저장」으로 고르세요.'}</span></div></div>`;
+}
+function today(sep){ const d = new Date(), p = n => String(n).padStart(2,'0'); return [d.getFullYear(), p(d.getMonth()+1), p(d.getDate())].join(sep); }
+function sheetHtml(){
+  const c = CALCS[calcState.id], L = calcState.last; if(!L) return '';
+  const v = calcState.vals, spec = calcState.spec, nv = numVals();
+  const model = spec ? spec.m : (v.model || '');
+  const cat = spec ? `${D.short[D.pages[spec.i].c]} ${D.pages[spec.i].l}` : '';
+  const rows = [];
+  c.fields.forEach(f => {
+    if(f.type==='model' || (f.show && !f.show(nv))) return;
+    let val, src = '';
+    if(f.type==='select') val = f.opts[v[f.id] ?? f.def][0];
+    else { val = v[f.id] ?? f.def ?? ''; if(val==='' || val==null){ if(f.opt) return; } }
+    const s = calcState.src[f.id];
+    if(s) src = `카탈로그 ${s.lab}`; else if(f.auto) src = '직접 입력'; else src = '사용 조건';
+    rows.push(`<tr><th>${esc(f.label.replace(/ · (선택|참고|수명시간용)$/,''))}</th><td>${esc(String(val))}</td><td class="muted">${esc(src)}</td></tr>`);
+  });
+  const steps = L.r.st.map((s,k) => { const R = REF[s.ref]; return `<div class="ps-step"><h4>${'①②③④⑤⑥⑦⑧⑨'[k]} ${esc(s.h.replace(/^[①-⑨]\s*/,''))}<span>${R?`근거: ${esc(REF_NAME[R[0]]||'')} ${esc(R[2])}`:'단위 환산'}</span></h4><div class="ps-eq"><i>공식</i>${s.f}</div><div class="ps-eq"><i>대입</i>${s.s}</div><div class="ps-eq r"><i>결과</i>${s.r}</div></div>`; }).join('');
+  return `<div class="ps"><div class="ps-head"><div class="ps-co">태광베어링</div><div class="ps-title">계산 검토서<br><span style="font-weight:500;font-size:10pt">${esc(c.title)}</span></div></div>
+  <table class="ps-meta"><tr><th>고객사</th><td>${esc(PO.cust)}</td><th>작성일</th><td>${today('-')}</td></tr>
+  <tr><th>프로젝트</th><td>${esc(PO.proj)}</td><th>작성자</th><td>${esc(PO.man)}</td></tr>
+  <tr><th>형번</th><td>${esc(model)}</td><th>치수표</th><td>${esc(cat)}</td></tr></table>
+  <h3>1. 입력 조건</h3><table><tr><th>항목</th><th style="width:auto">값</th><th style="width:auto">출처</th></tr>${rows.join('')}</table>
+  <h3>2. 결과</h3><div class="ps-ver">${L.r.ver}</div>
+  <h3>3. 계산 과정</h3>${steps}
+  <div class="ps-foot">본 계산은 THK 카탈로그에 실린 공식에 따른 참고값입니다. 예압품·특수 사용 조건은 제조사(THK·삼익THK) 확인이 필요합니다. · 태광베어링 견적 문의 ${MAIL}</div></div>`;
+}
+function pdfName(){
+  const c = CALCS[calcState.id], m = (calcState.spec ? calcState.spec.m : (calcState.vals.model||'')).replace(/[\\/:*?"<>|\s]+/g,'');
+  return [c.title.replace(/[·\s]/g,''), m, PO.cust.replace(/[\\/:*?"<>|]+/g,'').trim(), today('')].filter(Boolean).join('_');
+}
+function loadLib(src){ return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => no(new Error('load')); document.head.appendChild(s); }); }
+async function savePdf(){
+  const btn = $('#po-btn'), msg = $('#po-msg');
+  let host = $('#print-sheet'); if(!host){ host = document.createElement('div'); host.id = 'print-sheet'; document.body.appendChild(host); }
+  host.innerHTML = sheetHtml();
+  const dl = HAS_RT ? await window.claude.use('downloads').catch(()=>null) : null;
+  if(!dl){
+    const t = document.title; document.title = pdfName();
+    const back = () => { document.title = t; window.removeEventListener('afterprint', back); };
+    window.addEventListener('afterprint', back); setTimeout(back, 60000);
+    window.print(); return;
+  }
+  btn.disabled = true; msg.textContent = 'PDF 만드는 중…';
+  try{
+    if(!window.html2canvas) await loadLib('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    if(!window.jspdf) await loadLib('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    host.style.cssText = 'display:block;position:fixed;left:-10000px;top:0;background:#fff;padding:0';
+    const el = host.firstElementChild; el.style.width = '700px';
+    const steps = [...el.querySelectorAll('.ps-step, .ps-ver, table, h3, .ps-head, .ps-foot')];
+    const canvas = await window.html2canvas(el, {scale:2, backgroundColor:'#ffffff'});
+    const pdf = new window.jspdf.jsPDF({unit:'mm', format:'a4'});
+    const M = 14, W = 210 - 2*M, H = 297 - 2*M, pxPerMm = canvas.width / W, pageH = Math.floor(H * pxPerMm);
+    // cut pages between blocks, not through them
+    const k = canvas.width / el.offsetWidth, top0 = el.getBoundingClientRect().top;
+    const cuts = steps.map(b => Math.round((b.getBoundingClientRect().top - top0) * k)).filter(y => y>0).sort((a,b)=>a-b);
+    let y = 0, first = true;
+    while(y < canvas.height - 2){
+      let end = Math.min(y + pageH, canvas.height);
+      if(end < canvas.height){ const c2 = cuts.filter(c => c > y + pageH*0.5 && c <= end); if(c2.length) end = c2[c2.length-1]; }
+      const part = document.createElement('canvas'); part.width = canvas.width; part.height = end - y;
+      part.getContext('2d').drawImage(canvas, 0, y, canvas.width, end - y, 0, 0, canvas.width, end - y);
+      if(!first) pdf.addPage(); first = false;
+      pdf.addImage(part.toDataURL('image/jpeg', 0.92), 'JPEG', M, M, W, (end - y) / pxPerMm);
+      y = end;
+    }
+    await dl.save({filename: pdfName() + '.pdf', data: pdf.output('blob')});
+    msg.textContent = '저장했습니다.';
+  }catch(e){
+    msg.textContent = e && e.code==='declined' ? '저장을 취소했습니다.' : (e && e.message==='load' ? 'PDF 도구를 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.' : 'PDF를 만들지 못했습니다: ' + ((e && (e.message||e.code)) || ''));
+  }finally{ btn.disabled = false; host.style.cssText = ''; }
+}
+document.addEventListener('input', e => { const k = e.target.dataset && e.target.dataset.po; if(!k) return; PO[k] = e.target.value; if(k==='man'){ try{ localStorage.setItem('thk-po-man', PO.man); }catch(_){} } });
+document.addEventListener('click', e => { if(e.target.closest('#po-btn')) savePdf(); });
+
+
+/* ======================= 공통: 파일 저장 · 복사 ======================= */
+const PDF_LIB = ['https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js','https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'];
+const XLSX_LIB = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+async function getDl(){ return HAS_RT ? await window.claude.use('downloads').catch(()=>null) : null; }
+async function saveBlob(name, blob){
+  const dl = await getDl();
+  if(dl){ await dl.save({filename: name, data: blob}); return 'saved'; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000); return 'saved';
+}
+async function exportPdf(html, name, msg, btn){
+  let host = $('#print-sheet'); if(!host){ host = document.createElement('div'); host.id = 'print-sheet'; document.body.appendChild(host); }
+  host.innerHTML = html;
+  const dl = await getDl();
+  if(!dl){
+    const t = document.title; document.title = name;
+    const back = () => { document.title = t; window.removeEventListener('afterprint', back); };
+    window.addEventListener('afterprint', back); setTimeout(back, 60000);
+    window.print(); return;
+  }
+  if(btn) btn.disabled = true; if(msg) msg.textContent = 'PDF 만드는 중…';
+  try{
+    if(!window.html2canvas) await loadLib(PDF_LIB[0]);
+    if(!window.jspdf) await loadLib(PDF_LIB[1]);
+    host.style.cssText = 'display:block;position:fixed;left:-10000px;top:0;background:#fff;padding:0';
+    const el = host.firstElementChild; el.style.width = '700px';
+    const blocks = [...el.querySelectorAll('.ps-step, .ps-ver, table, tr, h3, .ps-head, .ps-foot')];
+    const canvas = await window.html2canvas(el, {scale:2, backgroundColor:'#ffffff'});
+    const pdf = new window.jspdf.jsPDF({unit:'mm', format:'a4'});
+    const M = 14, W = 210 - 2*M, H = 297 - 2*M, pxPerMm = canvas.width / W, pageH = Math.floor(H * pxPerMm);
+    const k = canvas.width / el.offsetWidth, top0 = el.getBoundingClientRect().top;
+    const cuts = blocks.map(b => Math.round((b.getBoundingClientRect().top - top0) * k)).filter(y => y>0).sort((a,b)=>a-b);
+    let y = 0, first = true;
+    while(y < canvas.height - 2){
+      let end = Math.min(y + pageH, canvas.height);
+      if(end < canvas.height){ const c2 = cuts.filter(c => c > y + pageH*0.5 && c <= end); if(c2.length) end = c2[c2.length-1]; }
+      const part = document.createElement('canvas'); part.width = canvas.width; part.height = end - y;
+      part.getContext('2d').drawImage(canvas, 0, y, canvas.width, end - y, 0, 0, canvas.width, end - y);
+      if(!first) pdf.addPage(); first = false;
+      pdf.addImage(part.toDataURL('image/jpeg', 0.92), 'JPEG', M, M, W, (end - y) / pxPerMm);
+      y = end;
+    }
+    await dl.save({filename: name + '.pdf', data: pdf.output('blob')});
+    if(msg) msg.textContent = '저장했습니다.';
+  }catch(e){
+    if(msg) msg.textContent = e && e.code==='declined' ? '저장을 취소했습니다.' : (e && e.message==='load' ? 'PDF 도구를 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.' : 'PDF를 만들지 못했습니다: ' + ((e && (e.message||e.code)) || ''));
+  }finally{ if(btn) btn.disabled = false; host.style.cssText = ''; }
+}
+function safeName(s){ return String(s||'').replace(/[\\/:*?"<>|]+/g,'').replace(/\s+/g,'').trim(); }
+function kgOf(kN){ const x = num(kN); return isFinite(x) ? Math.round(x*1000/G).toLocaleString() : ''; }
+/* 회신 문구 창 */
+function showReply(text, title){
+  let m = $('#reply-modal');
+  if(!m){ m = document.createElement('div'); m.id = 'reply-modal'; m.className = 'modal'; document.body.appendChild(m); }
+  m.innerHTML = `<div class="mbox" role="dialog" aria-label="회신 문구"><div class="mhead"><b>${esc(title||'회신 문구')}</b><button type="button" class="mx" data-mclose="1" aria-label="닫기">×</button></div>
+    <p class="hint" style="margin:0">필요하면 고친 뒤 「복사」를 누르고 카톡·메일에 붙여 넣으세요.</p>
+    <textarea id="reply-text" rows="12">${esc(text)}</textarea>
+    <div class="porow" style="margin-top:8px"><button type="button" class="pobtn" id="reply-copy">복사</button><span class="hint" id="reply-msg"></span></div></div>`;
+  m.hidden = false; copyReply();
+}
+async function copyReply(){
+  const ta = $('#reply-text'), msg = $('#reply-msg'); if(!ta) return;
+  let ok = false;
+  try{ await navigator.clipboard.writeText(ta.value); ok = true; }catch(e){}
+  if(!ok){ try{ ta.focus(); ta.select(); ok = document.execCommand('copy'); }catch(e){} }
+  msg.textContent = ok ? '복사했습니다.' : '자동 복사가 막혀 있습니다. 글을 길게 눌러(또는 Ctrl+C) 복사하세요.';
+  if(!ok){ ta.focus(); ta.select(); }
+}
+function sign(){ return ''; }
+
+/* ======================= 회신 문구: 근거 페이지 ======================= */
+function specReplyText(s){
+  const p = D.pages[s.i], cat = D.short[p.c];
+  const P = lastQ ? parse(lastQ) : null;
+  let defs = P ? itemDefs(P) : [];
+  if(!defs.length) defs = [ITEMS[0], ITEMS[1], ITEMS[3], ITEMS[7], ITEMS[8], ITEMS[9]];
+  const lines = [];
+  defs.forEach(d => {
+    const v = pickCells(s, d); if(!v.length) return;
+    const val = v.map(x => x[1]).join(' / ');
+    const lab = v[0][0] || d.name;
+    let unit = '';
+    if(d===ITEMS[0] || d===ITEMS[1]){ const kN = /kN/.test(lab); unit = kN ? ` kN (약 ${kgOf(v[0][1])} kg)` : (/\bN\b|\(N\)/.test(lab) ? ' N' : ''); }
+    else if(d===ITEMS[3]) unit = ' min⁻¹';
+    else if(['높이','폭','길이·전장','레일 폭 W1','레일 높이 M1','외경','내경·축경','곡경','리드','피치'].includes(d.name)) unit = ' mm';
+    lines.push(`- ${d.name}: ${val}${unit}`);
+  });
+  if(!lines.length) cellsOf(s).slice(0,6).forEach(([l,v]) => lines.push(`- ${l||'항목'}: ${v}`));
+  const pdfName = (s.pdf!=null && D.pdfs) ? D.pdfs[s.pdf] : null;
+  return [`[THK 카탈로그 확인] ${s.m}`, ...lines, `근거: ${cat} ${p.l}${s.pc?` · ${D.pages[s.pi].l}`:''}${pdfName?' (원본 페이지 첨부드립니다)':''}`, '', sign()].join('\n');
+}
+/* ======================= 회신 문구: 계산 결과 ======================= */
+function plain(html){ const d = document.createElement('div'); d.innerHTML = String(html).replace(/<br\s*\/?>/g,'\n'); return d.textContent.replace(/\n{2,}/g,'\n').trim(); }
+function calcReplyText(){
+  const c = CALCS[calcState.id], L = calcState.last; if(!L) return '';
+  const v = calcState.vals, spec = calcState.spec, nv = numVals();
+  const model = spec ? spec.m : (v.model || '');
+  const cond = [];
+  c.fields.forEach(f => {
+    if(f.type==='model' || (f.show && !f.show(nv)) || f.auto) return;
+    let val;
+    if(f.type==='select') val = f.opts[v[f.id] ?? f.def][0];
+    else { val = v[f.id] ?? f.def ?? ''; if(val==='' || val==null) return; }
+    cond.push(`${f.label.replace(/ · (선택|참고|수명시간용)$/,'')}: ${val}`);
+  });
+  const ver = plain(L.r.ver).split('\n')[0];
+  return [`[${c.title} 검토] ${model}${spec?` (${D.short[D.pages[spec.i].c]} ${D.pages[spec.i].l})`:''}`,
+    `조건: ${cond.slice(0,6).join(', ')}`, `결과: ${ver}`,
+    '상세 계산서(입력 조건·공식·근거 페이지)는 PDF로 첨부드립니다.', '※ THK 카탈로그 공식에 따른 참고값입니다.', '', sign()].join('\n');
+}
+
+/* ======================= 비교표 ======================= */
+const CMP = [];
+const CMP_ROWS = () => [ITEMS[0], ITEMS[1], ITEMS[3], ITEMS[4], ITEMS[7], ITEMS[8], ITEMS[9], ITEMS[5], ITEMS[6], ITEMS[10], ITEMS[11], ITEMS[12], ITEMS[13], ITEMS[14], ITEMS[15], ITEMS[16], ITEMS[17], ITEMS[18], ITEMS[19]];
+function cmpBar(){
+  let b = $('#cmp-bar');
+  if(!b){ b = document.createElement('div'); b.id = 'cmp-bar'; document.body.appendChild(b); }
+  document.body.classList.toggle('has-cmp', CMP.length>0);
+  if(!CMP.length){ b.hidden = true; return; }
+  b.hidden = false;
+  b.innerHTML = `<span><b>${CMP.length}</b>개 선택 · ${CMP.map(i => esc(S[i].m)).join(', ')}</span><button type="button" class="pobtn" id="cmp-open" ${CMP.length<2?'disabled':''}>비교표 보기</button><button type="button" id="cmp-clear">선택 해제</button>`;
+}
+function cmpData(){
+  const rows = CMP.map(i => S[i]);
+  const out = [];
+  out.push({name:'카탈로그', vals: rows.map(s => D.short[D.pages[s.i].c])});
+  out.push({name:'페이지', vals: rows.map(s => D.pages[s.i].l + (s.pc ? ` · ${D.pages[s.pi].l}` : ''))});
+  const unitOf = lab => /kN·m|kN-m|kN･m/.test(lab) ? 'kN·m' : /N·m|N･m/.test(lab) ? 'N·m' : /kN/.test(lab) ? 'kN' : /min/.test(lab) ? 'min⁻¹' : /kg\/m/.test(lab) ? 'kg/m' : /\bkg\b/.test(lab) ? 'kg' : /\bg\b/.test(lab) ? 'g' : '';
+  const keyOf = (lab, d) => lab.replace(/정적허용모멘트|기본정격하중|기본동정격하중|기본정정격하중|외형치수|LM\s?블\s?록|kN·m|kN･m|kN|N·m|kg\/m|kg|\(N\)|min⁻¹/g,'').replace(/\s+/g,' ').trim();
+  CMP_ROWS().forEach(d => {
+    const per = rows.map(s => pickCells(s, d));
+    if(!per.some(x => x.length)) return;
+    const multi = per.some(x => x.length > 1);
+    if(!multi){
+      const lab = per.map(x => (x[0]||[])[0]).find(Boolean) || '';
+      const u = unitOf(lab);
+      out.push({name: d.name + (u ? ` (${u})` : ''), vals: per.map(x => x.length ? x[0][1] : '')});
+      if(d===ITEMS[0] && u==='kN') out.push({name:'기본동정격하중 (kg 환산)', vals: per.map(x => x.length ? kgOf(x[0][1]) : '')});
+      return;
+    }
+    // several values per model: one row per label (e.g. MA 1개 / MA 2개 밀착 …)
+    const keys = [];
+    per.forEach(x => x.forEach(([l]) => { const k = keyOf(l, d); if(!keys.some(z => z.k===k)) keys.push({k, l}); }));
+    keys.forEach(({k, l}) => {
+      const u = unitOf(l);
+      const base = d.name.split('·')[0]; out.push({name: (k.includes(base) ? k : `${d.name} ${k}`).trim() + (u ? ` (${u})` : ''), vals: per.map(x => { const c = x.find(([l2]) => keyOf(l2, d)===k); return c ? c[1] : ''; })});
+    });
+  });
+  return {models: rows.map(s => s.m), rows: out};
+}
+function openCmp(){
+  if(CMP.length < 2) return;
+  const d = cmpData();
+  let m = $('#cmp-modal');
+  if(!m){ m = document.createElement('div'); m.id = 'cmp-modal'; m.className = 'modal'; document.body.appendChild(m); }
+  const f = [['cust','고객사명'],['proj','프로젝트명'],['man','작성자']];
+  m.innerHTML = `<div class="mbox wide" role="dialog" aria-label="형번 비교표"><div class="mhead"><b>형번 비교표</b><button type="button" class="mx" data-mclose="1" aria-label="닫기">×</button></div>
+    <div class="tw"><table class="st cmpt"><thead><tr><th>항목</th>${d.models.map(x=>`<th>${esc(x)}</th>`).join('')}</tr></thead>
+    <tbody>${d.rows.map(r => `<tr><th>${esc(r.name)}</th>${r.vals.map(v=>`<td>${v?esc(v):'<span class="hint">—</span>'}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+    <p class="hint">값은 각 카탈로그 치수표에서 읽은 그대로입니다. 형번마다 카탈로그(구판·국산)가 다를 수 있으니 「카탈로그」·「페이지」 줄을 함께 확인하세요.</p>
+    <div class="form" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">${f.map(([k,l])=>`<div class="fld"><label for="cm-${k}">${l}</label><input id="cm-${k}" data-po="${k}" value="${esc(PO[k])}" autocomplete="off"></div>`).join('')}</div>
+    <div class="porow"><button type="button" class="pobtn" id="cmp-pdf">PDF로 저장</button><button type="button" class="pobtn" id="cmp-xlsx">엑셀로 저장</button><button type="button" id="cmp-reply">견적 문의</button><span class="hint" id="cmp-msg">${HAS_RT?'':'PDF는 인쇄 창에서 「PDF로 저장」을 고르세요.'}</span></div></div>`;
+  m.hidden = false;
+}
+function cmpName(){ const d = cmpData(); return ['형번비교', d.models.map(safeName).join('-').slice(0,60), safeName(PO.cust), today('')].filter(Boolean).join('_'); }
+function cmpSheet(){
+  const d = cmpData();
+  return `<div class="ps"><div class="ps-head"><div class="ps-co">태광베어링</div><div class="ps-title">형번 비교표<br><span style="font-weight:500;font-size:10pt">THK 카탈로그 기준</span></div></div>
+  <table class="ps-meta"><tr><th>고객사</th><td>${esc(PO.cust)}</td><th>작성일</th><td>${today('-')}</td></tr><tr><th>프로젝트</th><td>${esc(PO.proj)}</td><th>작성자</th><td>${esc(PO.man)}</td></tr></table>
+  <table><tr><th>항목</th>${d.models.map(x=>`<th style="width:auto">${esc(x)}</th>`).join('')}</tr>${d.rows.map(r=>`<tr><th>${esc(r.name)}</th>${r.vals.map(v=>`<td>${esc(v||'—')}</td>`).join('')}</tr>`).join('')}</table>
+  <div class="ps-foot">값은 THK·삼익THK 카탈로그 치수표 기준입니다. 상세 치수·공차는 해당 페이지 원본을 함께 확인해 주십시오. · 태광베어링 견적 문의 ${MAIL}</div></div>`;
+}
+async function cmpXlsx(){
+  const msg = $('#cmp-msg'), d = cmpData();
+  const aoa = [['태광베어링 형번 비교표 (THK 카탈로그 기준)'], ['고객사', PO.cust, '프로젝트', PO.proj], ['작성일', today('-'), '작성자', PO.man], [], ['항목', ...d.models], ...d.rows.map(r => [r.name, ...r.vals.map(v => { const n = Number(String(v).replace(/,/g,'')); return v!=='' && isFinite(n) && /^[\d.,]+$/.test(v) ? n : v; })])];
+  try{
+    msg.textContent = '엑셀 파일 만드는 중…';
+    if(!window.XLSX) await loadLib(XLSX_LIB);
+    const ws = window.XLSX.utils.aoa_to_sheet(aoa); ws['!cols'] = [{wch:26}, ...d.models.map(()=>({wch:18}))];
+    const wb = window.XLSX.utils.book_new(); window.XLSX.utils.book_append_sheet(wb, ws, '비교표');
+    const buf = window.XLSX.write(wb, {bookType:'xlsx', type:'array'});
+    await saveBlob(cmpName() + '.xlsx', new Blob([buf], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+    msg.textContent = '저장했습니다.';
+  }catch(e){
+    if(e && e.code==='declined'){ msg.textContent = '저장을 취소했습니다.'; return; }
+    if(e && e.message==='load'){ // 인터넷이 없으면 CSV로
+      const csv = '﻿' + aoa.map(r => r.map(x => `"${String(x??'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+      try{ await saveBlob(cmpName() + '.csv', new Blob([csv], {type:'text/csv'})); msg.textContent = '인터넷 연결이 없어 엑셀에서 열 수 있는 CSV로 저장했습니다.'; }catch(_){ msg.textContent = '저장하지 못했습니다.'; }
+      return;
+    }
+    msg.textContent = '엑셀 파일을 만들지 못했습니다: ' + ((e && (e.message||e.code)) || '');
+  }
+}
+function cmpReplyText(){
+  const d = cmpData();
+  const lines = ['[THK 형번 비교] ' + d.models.join(' | ')];
+  d.rows.forEach(r => lines.push(`- ${r.name}: ${r.vals.map(v => v||'—').join(' | ')}`));
+  lines.push('비교표(PDF·엑셀) 첨부드립니다.', '', sign());
+  return lines.join('\n');
+}
+
+/* ======================= LM가이드 하중 배분 (A1-54·55, A1-60~62) ======================= */
+function dirFactors(model){
+  const m = String(model||'').replace(/\s/g,'').toUpperCase();
+  if(/^SSR/.test(m)) return {kind:'레이디얼 타입 (SSR)', dyn:{L:0.50, T:0.53}, sta:{L:0.50, T:0.43}, sep:true, X:1, Y:1};
+  if(/^SRS(5|7|9|20)(?!\d)/.test(m)) return {kind:'SRS 5·7·9·20 (기타 타입)', dyn:{L:1, T:1.19}, sta:{L:1, T:1.19}, X:1, Y:0.839};
+  if(/^(HSR|SHS|SRS(12|15|25)(?!\d))/.test(m)) return {kind:'4방향 등하중 타입', dyn:{L:1, T:1}, sta:{L:1, T:1}, X:1, Y:1};
+  return {kind:'4방향 등하중으로 가정 (형식별 표7·8 확인 필요)', dyn:{L:1, T:1}, sta:{L:1, T:1}, X:1, Y:1, guess:true};
+}
+const POSE_NAME = ['수평 사용 (바닥 장착) — A1-54 조건 1·2', '수직축 사용 — A1-55 조건 3', '벽면 부착 횡사용 — A1-55 조건 4'];
+function blockLoads(v){
+  const mg = v.Wm * G, a2 = mg*v.l2/(2*v.l0), a3l1 = mg*v.l3/(2*v.l1), a3l0 = mg*v.l3/(2*v.l0), q = mg/4;
+  let R, T;
+  if(v.pose==0){ R = [q + a2 - a3l1, q - a2 - a3l1, q - a2 + a3l1, q + a2 + a3l1]; T = [0,0,0,0]; }
+  else if(v.pose==1){ R = [-a2, a2, a2, -a2]; T = [a3l0, -a3l0, -a3l0, a3l0]; }
+  else { R = [-a3l1, -a3l1, a3l1, a3l1]; T = [q + a2, q - a2, q - a2, q + a2]; }
+  return {mg, R, T};
+}
+function equivLoad(PR, PT, fac, isStatic){
+  const r = isStatic ? fac.sta : fac.dyn;
+  const pr = PR >= 0 ? PR : -PR / r.L;            // 역레이디얼은 C/CL 비로 레이디얼 상당 하중으로
+  const pt = Math.abs(PT) / r.T;
+  if(fac.sep) return Math.max(pr, pt);             // 레이디얼형: 방향별 각각 검토 (A1-62 주)
+  return fac.X*pr + fac.Y*pt;
+}
+function loadDistribution(id, v){
+  const model = calcState.spec ? calcState.spec.m : (calcState.vals.model || '');
+  const fac = dirFactors(model), isStatic = id==='lm_static';
+  const bl = blockLoads(v);
+  const eq = bl.R.map((r,k) => equivLoad(r, bl.T[k], fac, isStatic));
+  let mx = 0; eq.forEach((e,k) => { if(e > eq[mx]) mx = k; });
+  return {fac, bl, eq, mx, model};
+}
+function ldSteps(id, v){
+  const ld = v._ld; if(!ld) return [];
+  const {bl, eq, mx, fac} = ld, N0 = x => Math.round(x).toLocaleString();
+  const pose = v.pose, ref = pose==0 ? 'lm_ld1' : 'lm_ld2';
+  const fR = pose==0 ? 'P1 = mg/4 + mg·ℓ2/(2ℓ0) − mg·ℓ3/(2ℓ1),  P2 = mg/4 − mg·ℓ2/(2ℓ0) − mg·ℓ3/(2ℓ1),  P3 = mg/4 − mg·ℓ2/(2ℓ0) + mg·ℓ3/(2ℓ1),  P4 = mg/4 + mg·ℓ2/(2ℓ0) + mg·ℓ3/(2ℓ1)'
+    : pose==1 ? 'P1 = P4 = −mg·ℓ2/(2ℓ0),  P2 = P3 = mg·ℓ2/(2ℓ0),  P1T = P4T = mg·ℓ3/(2ℓ0),  P2T = P3T = −mg·ℓ3/(2ℓ0)'
+    : 'P1 = P2 = −mg·ℓ3/(2ℓ1),  P3 = P4 = mg·ℓ3/(2ℓ1),  P1T = P4T = mg/4 + mg·ℓ2/(2ℓ0),  P2T = P3T = mg/4 − mg·ℓ2/(2ℓ0)';
+  const sub = `mg = ${v.Wm} kg × 9.81 = ${N0(bl.mg)} N,  ℓ0 = ${v.l0},  ℓ1 = ${v.l1},  ℓ2 = ${v.l2},  ℓ3 = ${v.l3} (mm)`;
+  const res = bl.R.map((r,k) => `P${k+1} = ${N0(r)}` + (pose==0 ? '' : `, P${k+1}T = ${N0(bl.T[k])}`)).join(';  ') + ' N';
+  const s1 = {h:`블록별 하중 (${POSE_NAME[pose].split(' — ')[0]}, 레일 2줄 × 블록 2개)`, ref, f: fR + '   (+ 레이디얼 / − 역레이디얼 방향)', s: sub, r: res};
+  const rr = isFinite(fac.dyn.L) ? (id==='lm_static' ? fac.sta : fac.dyn) : {L:1,T:1};
+  const s2 = {h:`등가하중 — 가장 큰 블록 P${mx+1} (${fac.kind})`, ref:'lm_pe',
+    f: fac.sep ? 'PE = max( PR, PL × C/CL, PT × C/CT )   (레이디얼형은 방향별로 검토)' : `PE = X × PR(L) + Y × PT   (X = ${fac.X}, Y = ${fac.Y}; 역레이디얼·횡방향은 정격하중 비로 레이디얼 상당 하중으로 환산)`,
+    s: `PR = ${N0(bl.R[mx])} N${bl.R[mx]<0?` (역레이디얼, CL/C = ${rr.L})`:''},  PT = ${N0(bl.T[mx])} N${bl.T[mx]?` (CT/C = ${rr.T})`:''}`,
+    r: `${id==='lm_static'?'P':'PC'} = ${N0(eq[mx])} N  (블록 1~4: ${eq.map(N0).join(' / ')} N)`};
+  if(id==='lm_static'){ s2.f = s2.f.replace('C/CL','C0/C0L').replace('C/CT','C0/C0T'); s2.s = s2.s.replace('CL/C','C0L/C0').replace('CT/C','C0T/C0'); }
+  return [s1, s2];
+}
+
+/* ======================= 형번 풀이 (HSR · SHS · SSR · SRS) ======================= */
+const SEALS = {
+  'UU':'엔드씰', 'SS':'엔드씰 + 사이드씰 + 이너씰', 'DD':'더블씰 + 사이드씰 + 이너씰', 'ZZ':'엔드씰 + 사이드씰 + 이너씰 + 금속 스크레이퍼', 'KK':'더블씰 + 사이드씰 + 이너씰 + 금속 스크레이퍼',
+  'GG':'LiCS (저저항 접촉씰)', 'PP':'LiCS + 사이드씰 + 이너씰',
+  'JJHH':'엔드씰 + 사이드씰 + 이너씰 + LaCS + 프로텍터', 'TTHH':'더블씰 + 사이드씰 + 이너씰 + LaCS + 프로텍터',
+  'F2':'불소 씰 + 사이드씰 + 이너씰', 'FZ2':'불소 씰 + 사이드씰 + 이너씰 + 금속 스크레이퍼', 'FJ2':'불소 씰 + 사이드씰 + 이너씰 + 프로텍터',
+  'F4':'불소 씰(더블) + 사이드씰 + 이너씰', 'FZ4':'불소 씰(더블) + 사이드씰 + 이너씰 + 금속 스크레이퍼', 'FJ4':'불소 씰(더블) + 사이드씰 + 이너씰 + 프로텍터'
+};
+function sealMeaning(code){
+  if(SEALS[code]) return SEALS[code];
+  let m = code.match(/^(UU|SS|DD|ZZ|KK|JJ|TT)HH(YY)?$/);
+  if(m){ const base = m[1]==='JJ' ? SEALS.JJHH : m[1]==='TT' ? SEALS.TTHH : SEALS[m[1]] + ' + LaCS (적층형 접촉 스크레이퍼)'; return base + (m[2] ? ' + 사이드 스크레이퍼' : ''); }
+  return null;
+}
+const SEAL_RE = /^(?:(?:UU|SS|DD|ZZ|KK|JJ|TT)HH(?:YY)?|FZ2|FJ2|FZ4|FJ4|F2|F4|UU|SS|DD|ZZ|KK|GG|PP)/;
+const DEC = {
+  HSR:{name:'HSR형 — LM가이드 세계 표준 (총볼, 4방향 등하중)', ref:'LM가이드 A1-184~187 · 국산 p.12',
+    types:{C:'플랜지형 · 탭 가공 (위·아래 어느 쪽에서도 장착)', LC:'C형과 같은 단면 · 블록 길이를 늘린 롱 타입', R:'폭(W) 최소 · 탭 가공 (각형)', LR:'R형 롱 타입', A:'플랜지형 · 탭 가공', LA:'A형 롱 타입', B:'플랜지형 · 관통 구멍 (아래에서 장착)', LB:'B형 롱 타입', YR:'블록 측면 장착 탭 (대칭 배치용)', CA:'6볼트 · 탭 가공', CB:'6볼트 · 관통 구멍', HA:'CA형 롱 타입', HB:'CB형 롱 타입', HR:'대형(100~150) · 6곳 탭'},
+    clr:['','C1','C0'], acc:['','H','P','SP','UP']},
+  SHS:{name:'SHS형 — 볼리테이너 LM가이드 세계 표준 (4방향 등하중)', ref:'LM가이드 A1-96~97 · 국산 p.14~15',
+    types:{C:'플랜지형 · 탭 가공 (위·아래 장착)', LC:'C형 롱 타입', V:'폭(W) 최소 · 탭 가공', LV:'V형 롱 타입', R:'폭(W) 최소 · 탭 가공 (HSR-R형과 같은 높이)', LR:'R형 롱 타입'},
+    clr:['','C1','C0'], acc:['','H','P','SP','UP']},
+  SSR:{name:'SSR형 — 볼리테이너 LM가이드 레이디얼 타입', ref:'LM가이드 A1-108~109 · 국산 p.18~19',
+    types:{XW:'폭(W) 최소 · 탭 가공', XV:'XW형과 같은 단면 · 블록 길이를 줄인 공간 절약형', XTB:'블록 바닥면에서 장착 (테이블에 관통 구멍을 낼 수 없을 때)', XSB:'XTB형과 같은 단면 · 짧은 공간 절약형'},
+    clr:['','C1'], acc:['','H','P','SP','UP']},
+  SRS:{name:'SRS형 — 볼리테이너 미니어처 LM가이드', ref:'LM가이드 A1-152~154 · 국산 p.20~23',
+    types:{S:'M형보다 블록 길이를 줄인 타입', M:'표준 타입', N:'M형보다 블록 길이를 늘린 타입', WS:'S형보다 길고 폭을 넓힌 타입', WM:'M형보다 길고 폭을 넓힌 타입', WN:'WM형보다 블록 길이를 늘린 타입'},
+    clr:['','C1'], acc:['','H','P']}
+};
+function decode(raw){
+  let s = String(raw||'').toUpperCase().replace(/[Ⅱ]/g,'II').replace(/[Ⅲ]/g,'III').replace(/[Ⅳ]/g,'IV').replace(/[\s_]/g,'').replace(/[－–—]/g,'-');
+  const parts = [], warn = [], info = [];
+  const add = (sym, what, mean) => parts.push({sym, what, mean});
+  let m, ser, size, type, rest, cnt = null;
+  if((m = s.match(/^(\d)?SRS(\d+)(X?W?G?[SMN])(\d?)(.*)$/))){
+    ser = 'SRS'; cnt = m[1]||m[4]||null; size = m[2]; type = m[3]; rest = m[5];
+  } else if((m = s.match(/^SSR(\d+)(X(?:W|V|TB|SB))(\d?)(.*)$/))){
+    ser = 'SSR'; size = m[1]; type = m[2]; cnt = m[3]||null; rest = m[4];
+  } else if((m = s.match(/^HSR(\d+)(X?(?:LC|LR|LA|LB|YR|CA|CB|HA|HB|HR|C|R|A|B))(M?)(\d?)(.*)$/))){
+    ser = 'HSR'; size = m[1]; type = m[2]; cnt = m[4]||null; rest = m[5]; if(m[3]) type += 'M';
+  } else if((m = s.match(/^SHS(\d+)(LC|LV|LR|C|V|R)(M?)(\d?)(.*)$/))){
+    ser = 'SHS'; size = m[1]; type = m[2]; cnt = m[4]||null; rest = m[5]; if(m[3]) type += 'M';
+  } else {
+    return {err:'HSR · SHS · SSR · SRS 형번만 풀이합니다. 예) HSR25A2SSC1+1240LP-II'};
+  }
+  const R = DEC[ser];
+  if(ser==='SRS' && cnt) add(cnt, '1축(레일 1줄)에 조합되는 LM 블록 개수', `${cnt}개`);
+  add(ser + size, '호칭형번 (형식 + 사이즈)', `${R.name} · 사이즈 ${size}`);
+  // block type
+  let tbase = ser==='SRS' ? type : type.replace(/M$/,''), stainless = /M$/.test(type) && ser!=='SRS';
+  let tmean = null, tnote = '';
+  if(ser==='SRS'){
+    const x = tbase.startsWith('X'), g = tbase.includes('G'), core = tbase.replace(/^X/,'').replace('G','');
+    tmean = R.types[core] ? R.types[core] : null;
+    if(g) tnote += ' · G: SRS-G형 (국산 카탈로그 p.20 별도 표, 레일은 SRS와 공용)';
+    if(x) tnote += ' · X: 사이즈 9 전용 표기';
+  } else {
+    const x = /^X/.test(tbase) && ser==='HSR', core = x ? tbase.slice(1) : tbase;
+    tmean = R.types[core] || null;
+    if(x) tnote += ' · X: 사이즈 65 등에 쓰는 X 시리즈 표기';
+  }
+  add(type, 'LM 블록의 종류', tmean ? tmean + tnote + (stainless ? ' · M: 스테인리스강' : '') : '카탈로그 종류 목록에 없는 기호');
+  if(!tmean) warn.push(`블록 종류 「${tbase}」는 ${ser}형 종류 목록에 없습니다.`);
+  if(ser!=='SRS'){ if(cnt) add(cnt, '1축(레일 1줄)에 조합되는 LM 블록 개수', `${cnt}개`); else info.push('블록 개수가 없습니다 (블록 단품 표기일 수 있음).'); }
+  // options
+  let r = rest;
+  if((m = r.match(/^QZ/))){ add('QZ', '윤활장치 QZ 부착', 'QZ 부착 (그리스 니플은 장착되지 않음)'); r = r.slice(2); }
+  if((m = r.match(SEAL_RE))){ const sm = sealMeaning(m[0]); add(m[0], '방진용 옵션 기호 (A1-524)', sm || '방진 옵션'); r = r.slice(m[0].length); }
+  else info.push('방진용 옵션 기호가 없습니다 (씰 없음).');
+  if((m = r.match(/^C[01]/))){
+    const mean = m[0]==='C1' ? '경예압 (C1)' : '중예압 (C0)';
+    add(m[0], '레이디얼 클리어런스 기호 (A1-72)', mean); r = r.slice(2);
+    if(!R.clr.includes(m[0])) warn.push(`${ser}형은 레이디얼 클리어런스가 보통·${R.clr.slice(1).join('·')}만 있습니다 (A1-72). 「${m[0]}」 확인 필요.`);
+    if(ser==='SHS' && size==='15' && m[0]==='C0') warn.push('SHS15는 중예압(C0) 규격이 없습니다 (A1-72).');
+  } else add('(없음)', '레이디얼 클리어런스 기호', '보통 (무기호)');
+  if((m = r.match(/^[FSE]{1,2}(?=\+|$)/))){ add(m[0], 'LM 블록 표면처리 · 특수 내용 식별 기호', 'F: 표면처리 / S·E: 특수 사양 — 내용은 삼익THK 확인'); r = r.slice(m[0].length); }
+  if((m = r.match(/^\+(\d+)L/))){
+    const L = +m[1]; add(m[0], 'LM 레일 길이', `${L.toLocaleString()} mm`); r = r.slice(m[0].length);
+    const rail = S ? S.filter(x => x.z.replace(/[^A-Z0-9]/g,'') === ser + size && cellsOf(x).some(([l]) => /Max/.test(l))) : [];
+    const mx = rail.map(x => num((cellsOf(x).find(([l]) => /Max/.test(l))||[])[1])).filter(isFinite);
+    if(mx.length){ const lim = Math.max(...mx); if(L > lim) warn.push(`레일 길이 ${L.toLocaleString()} mm가 표준 최대 길이 ${lim.toLocaleString()} mm를 넘습니다 (연결 레일 또는 삼익THK 문의).`); else info.push(`레일 표준 최대 길이 ${lim.toLocaleString()} mm 이내입니다.`); }
+  } else info.push('레일 길이(+…L)가 없습니다 (블록 단품 또는 레일 별도 표기).');
+  if(ser==='SSR' && (m = r.match(/^Y/))){ add('Y', 'LM 레일 장착 구멍 기호 (국산 p.19)', size==='15' ? 'M4용 장착 구멍 레일 (무기호는 M3용)' : size==='25' ? 'M6용 장착 구멍 레일' : 'Y기호 레일'); r = r.slice(1); if(!['15','25'].includes(size)) warn.push('Y기호는 SSR15·25에만 적용됩니다 (국산 p.19).'); }
+  if((m = r.match(/^(SP|UP|H|P)/))){
+    const am = {H:'상급 (H)', P:'정밀급 (P)', SP:'초정밀급 (SP)', UP:'초초정밀급 (UP)'}[m[0]];
+    add(m[0], '정도 기호 (A1-77)', am); r = r.slice(m[0].length);
+    if(!R.acc.includes(m[0])) warn.push(`${ser}형 정도 규격은 보통·${R.acc.slice(1).join('·')}입니다. 「${m[0]}」 확인 필요.`);
+    if(['SP','UP'].includes(m[0])) info.push('국산(삼익THK) 카탈로그에는 보통·상급·정밀급만 실려 있습니다.');
+  } else add('(없음)', '정도 기호', '보통급 (무기호)');
+  if(ser==='SRS' && (m = r.match(/^M/))){ add('M', '스테인리스 타입 LM 레일', '스테인리스 레일'); r = r.slice(1); }
+  if((m = r.match(/^Z/))){ add('Z', '스틸 테이프 장착', '레일 윗면 스틸 테이프'); r = r.slice(1); }
+  if((m = r.match(/^T/))){ add('T', 'LM 레일 연결 기호', '연결(이음) 레일'); r = r.slice(1); }
+  if((m = r.match(/^[FSE]{1,2}(?=-|$)/))){ add(m[0], 'LM 레일 표면처리 · 특수 내용 식별 기호', 'F: 표면처리 / S·E: 특수 사양 — 내용은 삼익THK 확인'); r = r.slice(m[0].length); }
+  if((m = r.match(/^-(IV|III|II|I|\d)/))){
+    const n = {I:1, II:2, III:3, IV:4}[m[1]] || +m[1];
+    add(m[0], '동일 평면에 사용되는 축수 기호 (A1-13)', `레일 ${n}줄을 같은 평면에서 사용`); r = r.slice(m[0].length);
+  }
+  if(r) warn.push(`풀이하지 못한 기호: 「${r}」 — 삼익THK 확인 필요`);
+  const key = ser + size + (ser==='SRS' ? type : type.replace(/M$/,'') + (stainless?'M':''));
+  return {ser, size, type, key, parts, warn, info, ref:R.ref, norm:s};
+}
+function decHtml(q){
+  if(!q) return '';
+  const d = decode(q);
+  if(d.err) return `<div class="note">${esc(d.err)}</div>`;
+  let h = `<div class="ans"><div class="ans-h"><strong class="mono">${esc(d.norm)}</strong><span>${esc(d.ref)} · LM가이드 A1-551 호칭형번의 구성예</span></div>
+    <div class="tw"><table class="st dect"><thead><tr><th>기호</th><th>구성 항목</th><th>뜻</th></tr></thead><tbody>${d.parts.map(p=>`<tr><td class="m">${esc(p.sym)}</td><td>${esc(p.what)}</td><td>${esc(p.mean)}</td></tr>`).join('')}</tbody></table></div></div>`;
+  if(d.warn.length) h += `<div class="note" style="margin-top:8px">${d.warn.map(esc).join('<br>')}</div>`;
+  if(d.info.length) h += `<p class="hint" style="margin:6px 0 0">${d.info.map(esc).join('<br>')}</p>`;
+  h += `<p class="hint" style="margin:6px 0 0">이 호칭형번에서 1세트는 레일 1줄 조합입니다. 2줄 평행 사용이면 최소 2세트가 필요합니다.</p>`;
+  let rows = S ? S.filter(x => x.z.replace(/[^A-Z0-9]/g,'') === d.key) : [];
+  const rated = rows.filter(x => pickCells(x, ITEMS[0]).length || pickCells(x, ITEMS[1]).length); if(rated.length) rows = rated;
+  if(rows.length){
+    h += `<div class="sec-h" style="margin-top:14px"><span>${esc(d.key)} 치수표 값</span></div><div class="ans"><div class="tw"><table class="st"><thead><tr><th>카탈로그</th><th style="text-align:right">동정격 C</th><th style="text-align:right">정정격 C0</th><th style="text-align:right">높이</th><th style="text-align:right">폭</th><th style="text-align:right">길이</th><th>페이지</th></tr></thead><tbody>`;
+    rows.slice(0,8).forEach(x => {
+      const c = dd => (pickCells(x, dd)[0]||[])[1] || '—';
+      h += `<tr class="r" data-s="${S.indexOf(x)}"><td>${esc(D.short[D.pages[x.i].c])}</td><td class="v">${esc(c(ITEMS[0]))}</td><td class="v">${esc(c(ITEMS[1]))}</td><td class="v">${esc(c(ITEMS[7]))}</td><td class="v">${esc(c(ITEMS[8]))}</td><td class="v">${esc(c(ITEMS[9]))}</td><td class="pg">${esc(D.pages[x.i].l)}</td></tr>`;
+    });
+    h += `</tbody></table></div></div><p class="hint" style="margin:6px 0 0">줄을 누르면 근거 페이지(원본 그림·원본 PDF)가 열립니다.</p>`;
+  } else h += `<p class="hint">「${esc(d.key)}」 치수표 줄을 찾지 못했습니다. 검색 탭에서 「${esc(d.ser+d.size)}」로 찾아보세요.</p>`;
+  h += `<div class="porow" style="margin-top:10px"><button type="button" id="dec-reply">견적 문의</button></div>`;
+  return h;
+}
+function decReplyText(q){
+  const d = decode(q); if(d.err) return '';
+  const lines = [`[형번 확인] ${d.norm}`, ...d.parts.map(p => `- ${p.sym}: ${p.what} → ${p.mean}`)];
+  if(d.warn.length) lines.push('', '확인 필요:', ...d.warn.map(w => '- ' + w));
+  lines.push('', `근거: ${d.ref}, LM가이드 A1-551`, '', sign());
+  return lines.join('\n');
+}
+let DECQ = '';
+function renderDec(){
+  const ex = ['HSR25A2SSC1+1240LP-II','SHS25LC2QZKKHHC0+1200LP-II','SSR25XW2UUC1+1240LYP-II','2SRS12GMQZUUC1+220LPM-II'];
+  $('#dec').innerHTML = `<div class="panel"><h2>형번 풀이 <span class="hint" style="font-weight:400">HSR · SHS · SSR · SRS</span></h2>
+    <div class="cguide"><div><span>이럴 때</span><p>전체 형번이 무슨 뜻인지, 맞게 쓴 형번인지 확인할 때</p></div><div><span>넣을 값</span><p>형번 전체를 그대로 붙여 넣기 (띄어쓰기·대소문자 상관없음)</p></div><div><span>결과 보는 법</span><p>기호마다 뜻이 나오고, 카탈로그 규격에 없는 조합은 <b>확인 필요</b>로 표시됩니다. 아래 치수표 줄을 누르면 근거 페이지가 열립니다.</p></div></div>
+    <div class="fld wide"><label for="dec-q">형번</label><input id="dec-q" value="${esc(DECQ)}" placeholder="예: HSR25A2SSC1+1240LP-II" autocomplete="off" spellcheck="false"></div>
+    <div class="chips" style="margin-top:8px">${ex.map(x=>`<button type="button" class="chip" data-dex="${esc(x)}">${esc(x)}</button>`).join('')}</div></div>
+    <div id="dec-out" style="margin-top:12px">${decHtml(DECQ)}</div>`;
+}
+
+
+/* ======================= 사용 안내 ======================= */
+function openHelp(){
+  const web = /^https?:/.test(location.protocol) && !HAS_RT;
+  let m = $('#help-modal'); if(!m){ m = document.createElement('div'); m.id = 'help-modal'; m.className = 'modal'; document.body.appendChild(m); }
+  m.innerHTML = `<div class="mbox" role="dialog" aria-label="사용 안내"><div class="mhead"><b>사용 안내</b><button type="button" class="mx" data-mclose="1" aria-label="닫기">×</button></div><div class="helpc">
+  <h4>검색 — 「형번 + 알고 싶은 항목」</h4>
+  <ul><li><code>HSR25 정격하중</code>, <code>BLK2525 허용회전수</code>, <code>SSR15XW 레일폭</code>, <code>CF10 외경</code>처럼 형번 뒤에 항목을 붙이면 그 값만 표로 나옵니다. 형번만 넣으면 정격하중 등 주요 값이 나옵니다.</li><li>띄어쓰기·대소문자는 상관없습니다. 결과가 너무 많으면 형번을 길게 넣으세요 (<code>HSR25</code> → <code>HSR25C</code>).</li><li>형번이 아닌 말(<code>그리스 주입량</code>, <code>예압</code>)은 카탈로그 본문에서 찾습니다. 오른쪽 칸에서 카탈로그 범위를 좁힐 수 있습니다.</li></ul>
+  <h4>근거 확인 · 원본 PDF</h4>
+  <ul><li>결과 줄을 누르면 근거 페이지가 열립니다. 물어본 항목은 노란 칸, 원본 그림의 해당 형번 줄은 노란 줄로 표시됩니다.</li><li>${D && D.pdfs ? '<b>「원본 PDF 열기」</b>를 누르면 카탈로그에서 그 쪽만 떼어낸 원본이 열립니다. 확대해 숫자를 확인하고, 저장해서 사내 자료로 쓸 수 있습니다. 「카탈로그 원본에서 이 쪽 열기」는 카탈로그 전체를 그 쪽부터 엽니다.' : '「크게 보기」로 원본 그림을 키워서 숫자를 대조하세요.'}</li></ul>
+  <h4>비교표 · 견적 문의</h4>
+  <ul><li>결과 줄 맨 앞 「비교」 칸을 2~4개 체크하면 화면 아래 <b>「비교표 보기」</b>가 생깁니다 → PDF·엑셀 저장. 다른 형번을 검색해도 체크는 유지됩니다.</li><li>근거 페이지·계산 결과·비교표·형번 풀이 화면이나 맨 위의 <b>「견적 문의」</b>를 누르면 형번과 확인한 내용이 채워진 견적 문의 메일이 만들어집니다. 수량·희망 납기만 적어 보내 주세요.</li></ul>
+  <h4>계산기 (7종)</h4>
+  <ul><li>형번을 넣으면 정격하중·곡경 등이 표에서 자동으로 채워지고, 조건만 넣으면 됩니다. 하중은 <b>kg</b>으로 넣습니다 (1 kN ≈ 102 kg).</li><li>LM가이드는 「전체 무게 ÷ 블록 개수」가 기본이고, 짐이 한쪽으로 치우쳐 있으면 「무게중심 위치로 블록별 계산」을 고르세요.</li><li>결과에 공식·대입 과정·근거 페이지가 나오고, <b>「PDF로 저장」</b>으로 계산 검토서를 만들 수 있습니다.</li></ul>
+  <h4>형번 풀이 (HSR · SHS · SSR · SRS)</h4>
+  <ul><li>전체 형번(<code>HSR25A2SSC1+1240LP-II</code>)을 붙여 넣으면 블록 종류·씰·예압·레일 길이·정도를 기호별로 풀어 줍니다.</li><li>카탈로그 규격에 없는 조합(예: SSR의 C0, 표준 길이 초과)은 <b>확인 필요</b>로 표시됩니다.</li></ul>
+  ${web ? `<h4>휴대폰에서</h4>
+  <ul><li>크롬은 ⋮ → 「홈 화면에 추가」, 삼성 인터넷은 ≡ → 「현재 페이지 추가」, 아이폰은 사파리의 공유 버튼 → 「홈 화면에 추가」를 누르면 앱처럼 바로 열립니다. 카톡에서 열었다면 먼저 「다른 브라우저로 열기」를 하세요.</li><li>비밀번호는 한 번 넣으면 그 기기에서 30일 동안 기억합니다. 처음 열 때 자료(약 11 MB)를 받으므로 와이파이에서 한 번 열어 두면 이후 빠릅니다. 원본 그림·PDF는 볼 때만 받습니다.</li></ul>` : ''}
+  <p class="hint" style="margin:0">숫자는 PDF에서 자동으로 읽은 값입니다. 설계·선정에 쓰기 전에는 근거 페이지의 원본 숫자와 대조해 주세요. 같은 형번이라도 구판·국산(삼익THK) 카탈로그마다 값이 다를 수 있습니다.</p>
+  <p class="hint" style="margin:8px 0 0">재고·납기·견적 문의: 태광베어링 <a href="mailto:${MAIL}">${MAIL}</a></p>
+  </div></div>`;
+  m.hidden = false;
+}
+/* ======================= events ======================= */
+let tmr, ctmr;
+$('#q').addEventListener('input', e => { clearTimeout(tmr); const v = e.target.value; tmr = setTimeout(()=>run(v), 280); });
+$('#q').addEventListener('keydown', e => { if(e.key==='Enter'){ clearTimeout(tmr); run(e.target.value); e.target.blur(); } });
+$('#clear').addEventListener('click', () => { $('#q').value=''; run(''); $('#q').focus(); });
+$('#cat').addEventListener('change', e => { store('thk-cat', e.target.value); run($('#q').value); });
+$('#t-search').addEventListener('click', () => setTab('search'));
+$('#t-calc').addEventListener('click', () => setTab('calc'));
+$('#t-dec').addEventListener('click', () => setTab('dec'));
+let dtmr;
+document.addEventListener('input', e => { if(e.target.id==='dec-q'){ DECQ = e.target.value; clearTimeout(dtmr); dtmr = setTimeout(() => { $('#dec-out').innerHTML = decHtml(DECQ); }, 250); } });
+document.addEventListener('click', e => {
+  const cb = e.target.closest && e.target.closest('input[data-cmp]');
+  if(cb){ e.stopPropagation(); const i = +cb.dataset.cmp, k = CMP.indexOf(i);
+    if(cb.checked && k<0){ if(CMP.length>=4){ cb.checked = false; alertBar('비교표는 최대 4개까지 넣을 수 있습니다.'); return; } CMP.push(i); }
+    if(!cb.checked && k>=0) CMP.splice(k,1);
+    cmpBar(); }
+}, true);
+function alertBar(t){ cmpBar(); const b = $('#cmp-bar'); if(!b) return; b.hidden = false; const s = b.querySelector('span'); if(s){ const o = s.innerHTML; s.textContent = t; setTimeout(() => cmpBar(), 2200); } }
+document.addEventListener('click', e => {
+  const t = e.target;
+  if(t.classList && t.classList.contains('modal')){ t.hidden = true; return; }
+  const b = t.closest && t.closest('button'); if(!b) return;
+  if(b.dataset.mclose){ b.closest('.modal').hidden = true; return; }
+  if(b.dataset.dex){ DECQ = b.dataset.dex; const q = $('#dec-q'); if(q) q.value = DECQ; $('#dec-out').innerHTML = decHtml(DECQ); return; }
+  if(b.dataset.reply){ const sp = S[+b.dataset.reply]; openQuote([sp.m], specReplyText(sp)); return; }
+  if(b.dataset.cmpadd){ const i = +b.dataset.cmpadd; if(!CMP.includes(i)){ if(CMP.length>=4){ alertBar('비교표는 최대 4개까지 넣을 수 있습니다.'); return; } CMP.push(i); } document.querySelectorAll(`input[data-cmp="${i}"]`).forEach(c => c.checked = true); cmpBar(); b.textContent = '비교표에 넣음 ✓'; return; }
+  switch(b.id){
+    case 'cmp-open': openCmp(); break;
+    case 'cmp-clear': CMP.length = 0; document.querySelectorAll('input[data-cmp]').forEach(c => c.checked = false); cmpBar(); break;
+    case 'cmp-pdf': exportPdf(cmpSheet(), cmpName(), $('#cmp-msg'), b); break;
+    case 'cmp-xlsx': cmpXlsx(); break;
+    case 'cmp-reply': openQuote(cmpData().models, cmpReplyText()); break;
+    case 'quote-btn': openQuote([], ''); break;
+    case 'q-send': sendQuote(); break;
+    case 'q-copy': copyQuote(); break;
+    case 'reply-copy': copyReply(); break;
+    case 'po-reply': openQuote([calcState.spec ? calcState.spec.m : (calcState.vals.model||'')], calcReplyText()); break;
+    case 'help-btn': openHelp(); break;
+    case 'dec-reply': { const dq = decode(DECQ); openQuote([dq.err ? DECQ : dq.norm], decReplyText(DECQ)); } break;
+  }
+});
+document.addEventListener('keydown', e => { if(e.key==='Escape'){ document.querySelectorAll('.modal').forEach(m => m.hidden = true); } });
+$('#calc').addEventListener('input', e => {
+  const f = e.target.dataset.f; if(!f) return;
+  if(f==='model'){ calcState.vals.model = e.target.value; clearTimeout(ctmr); ctmr = setTimeout(() => { const c = specsByModel(e.target.value, CALCS[calcState.id].fam); const keep = {...calcState.vals}; fillFromSpec(c[0]||null); if(!c[0]){ calcState.vals = keep; } renderCalc(); const el = $('#cf-model'); el.focus(); el.setSelectionRange(el.value.length, el.value.length); }, 450); return; }
+  if(f==='row') return;
+  calcState.vals[f] = e.target.value;
+  if(e.target.tagName==='SELECT'){ renderCalc(); return; }
+  if(calcState.src[f] && num(e.target.value) !== num(calcState.src[f].alts[calcState.src[f].k][1])){ delete calcState.src[f]; e.target.closest('.fld').classList.remove('auto'); const sEl = e.target.parentNode.querySelector('.src'); if(sEl) sEl.textContent = '직접 입력 (표 값을 바꿈)'; }
+  computeCalc();
+});
+$('#calc').addEventListener('change', e => {
+  if(e.target.dataset.f==='row'){ const s = S[+e.target.value]; fillFromSpec(s); renderCalc(); return; }
+  if(e.target.dataset.alt){ const f = e.target.dataset.alt, src = calcState.src[f]; src.k = +e.target.value; calcState.vals[f] = String(num(src.alts[src.k][1])); src.label = src.alts[src.k][0]; renderCalc(); }
+});
+document.addEventListener('click', e => {
+  const t = e.target.closest('button, tr.r'); if(!t) return;
+  if(t.matches('tr.r')){ const s = S[+t.dataset.s]; openPage(s.i, true, s); return; }
+  if(t.dataset.q){ setTab('search'); $('#q').value = t.dataset.q; run(t.dataset.q); window.scrollTo({top:0}); return; }
+  if(t.dataset.i){ openPage(+t.dataset.i, !!t.dataset.hl); return; }
+  if(t.dataset.open){ const i = D.pages.findIndex(p => BASE[p.c]===t.dataset.open); if(i>=0) openPage(i,false); return; }
+  if(t.dataset.go!==undefined && t.dataset.go!==''){ openPage(+t.dataset.go, true); return; }
+  if(t.dataset.calc){ openCalc(t.dataset.calc, +t.dataset.si); return; }
+  if(t.dataset.cp){ const keepModel = calcState.vals.model; const sp = calcState.spec; calcState.id = t.dataset.cp; calcState.vals = {}; calcState.src = {}; calcState.spec = null;
+    if(keepModel){ calcState.vals.model = keepModel; const c = specsByModel(keepModel, CALCS[calcState.id].fam); const s = (sp && c.includes(sp)) ? sp : c[0]; if(s) fillFromSpec(s); }
+    renderCalc(); return; }
+  if(t.dataset.ref){ const [f,p] = REF[t.dataset.ref]; openRef(f,p); return; }
+  if(t.dataset.srow && calcState.spec){ const s = calcState.spec; lastQ = s.m; openPage(s.i, false, s); return; }
+  if(t.id==='vback'){ closeView(); return; }
+  if(t.id==='zoomb'){ const on = !$('#imgs').classList.contains('zoom'); $('#imgs').classList.toggle('zoom', on); t.classList.toggle('on', on); t.textContent = on?'원래 크기':'크게 보기'; store('thk-zoom', on); }
+});
+document.addEventListener('keydown', e => {
+  if(curView==null || e.target.tagName==='INPUT' || e.target.tagName==='SELECT') return;
+  if(document.querySelector('.modal:not([hidden])')) return;
+  if(e.key==='Escape'){ closeView(); return; }
+  const nb = neighbors(curView);
+  if(e.key==='ArrowLeft' && nb.prev!=null) openPage(nb.prev, true);
+  if(e.key==='ArrowRight' && nb.next!=null) openPage(nb.next, true);
+});
+addEventListener('resize', () => { if(curView!=null) document.body.classList.toggle('viewing', matchMedia('(max-width:979px)').matches); });
+
+/* ======================= 견적 문의 (고객사용) ======================= */
+const QF = {name:'', tel:''};
+try{ QF.name = localStorage.getItem('tkc-q-name')||''; QF.tel = localStorage.getItem('tkc-q-tel')||''; }catch(e){}
+function quoteRef(t){ return String(t||'').replace(/ \(원본 페이지 첨부드립니다\)/g,'').split('\n').filter(l => !/첨부드립니다/.test(l)).join('\n').trim(); }
+function openQuote(models, ref){
+  models = (models||[]).filter(Boolean);
+  let m = $('#quote-modal');
+  if(!m){ m = document.createElement('div'); m.id = 'quote-modal'; m.className = 'modal'; document.body.appendChild(m); }
+  const f = (id, lab, val, ph) => `<div class="fld"><label for="${id}">${lab}</label><input id="${id}" value="${esc(val||'')}" placeholder="${esc(ph||'')}" autocomplete="off"></div>`;
+  m.innerHTML = `<div class="mbox" role="dialog" aria-label="견적 문의"><div class="mhead"><b>견적 문의 — 태광베어링</b><button type="button" class="mx" data-mclose="1" aria-label="닫기">×</button></div>
+    <p class="hint" style="margin:0 0 6px">수량·희망 납기를 적고 「메일 보내기」를 누르면 태광베어링으로 보낼 메일이 작성됩니다.</p>
+    <div class="form">${f('q-model','형번', models.join(', '), '예: HSR25A2SSC1+1240LP-II')}${f('q-qty','수량','', '예: 블록 4개, 레일 2본')}${f('q-due','희망 납기','', '예: 11월 말')}${f('q-name','문의자', QF.name, '성함')}${f('q-tel','연락처', QF.tel, '전화·메일')}</div>
+    <label class="hint" for="quote-text" style="display:block;margin:8px 0 4px">요청 사항 · 참고 내용</label>
+    <textarea id="quote-text" rows="8" placeholder="레일 길이, 사용 조건 등">${esc(quoteRef(ref))}</textarea>
+    <div class="porow" style="margin-top:8px"><button type="button" class="pobtn" id="q-send">메일 보내기</button><button type="button" id="q-copy" class="sbtn">내용 복사</button><span class="hint" id="q-msg">받는 곳: ${esc(MAIL)}</span></div></div>`;
+  m.hidden = false;
+  setTimeout(() => { const q = $(models.length ? '#q-qty' : '#q-model'); if(q) q.focus(); }, 30);
+}
+function quoteMail(){
+  const g = id => ($('#'+id)||{}).value ? $('#'+id).value.trim() : '';
+  QF.name = g('q-name'); QF.tel = g('q-tel');
+  try{ localStorage.setItem('tkc-q-name', QF.name); localStorage.setItem('tkc-q-tel', QF.tel); }catch(e){}
+  const model = g('q-model'), ref = ($('#quote-text')||{}).value || '';
+  const subject = `[견적문의] ${CUSTNAME || '고객사'}${model ? ' - ' + model : ''}`;
+  const body = ['태광베어링 견적 문의드립니다.', '', `고객사: ${CUSTNAME}`, `문의자: ${QF.name}`, `연락처: ${QF.tel}`, '', `형번: ${model}`, `수량: ${g('q-qty')}`, `희망 납기: ${g('q-due')}`,
+    ...(ref.trim() ? ['', '[요청 사항 · 참고 내용]', ref.trim()] : []), '', '— THK 카탈로그 검색(태광베어링 제공)에서 작성'].join('\n');
+  return {subject, body};
+}
+function sendQuote(){
+  const {subject, body} = quoteMail();
+  const a = document.createElement('a'); a.href = `mailto:${MAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`; a.target = '_top'; document.body.appendChild(a); a.click(); a.remove();
+  const msg = $('#q-msg'); if(msg) msg.innerHTML = `메일 앱이 열리지 않으면 「내용 복사」 후 <b>${esc(MAIL)}</b>로 보내 주세요.`;
+}
+async function copyQuote(){
+  const {subject, body} = quoteMail(), t = `받는 곳: ${MAIL}\n제목: ${subject}\n\n${body}`;
+  let ok = false;
+  try{ await navigator.clipboard.writeText(t); ok = true; }catch(e){}
+  if(!ok){ try{ const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy'); ta.remove(); }catch(e){} }
+  const msg = $('#q-msg'); if(msg) msg.textContent = ok ? `복사했습니다. 메일에 붙여 넣어 ${MAIL}로 보내 주세요.` : '복사가 막혀 있습니다. 화면을 캡처해 보내 주셔도 됩니다.';
+}
+/* ===== 접근 코드 (고객사별 · 코드 원문은 소스에 없음, 고객사명은 코드로만 풀림) ===== */
+const KEY = 'f57a66507ed8176e442410d53d43e266', BLOCK = [];
+let CUSTNAME = '';
+const CAL = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function normName(n){ return String(n||'').normalize('NFC').replace(/\(주\)|㈜|주식회사|\s+/g,'').toUpperCase(); }
+async function codeOf(name){ const te = new TextEncoder(), k = await crypto.subtle.importKey('raw', te.encode(KEY), {name:'HMAC', hash:'SHA-256'}, false, ['sign']);
+  const b = new Uint8Array(await crypto.subtle.sign('HMAC', k, te.encode('tkc|' + normName(name)))); return [...b.slice(0,6)].map(x => CAL[x % 32]).join(''); }
+async function shaHex(t){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,'0')).join(''); }
+async function valid(name, code){ if(!normName(name)) return false; code = String(code||'').toUpperCase().replace(/[\s-]/g,''); if(code !== await codeOf(name)) return false; return !BLOCK.includes(await shaHex('tkb|' + normName(name))); }
+function kv(k, v){ try{ if(v===undefined) return localStorage.getItem(k) || sessionStorage.getItem(k); localStorage.setItem(k, v); }catch(e){} try{ if(v!==undefined) sessionStorage.setItem(k, v); else return sessionStorage.getItem(k); }catch(e){} return null; }
+function openGate(){ const g = $('#gate'); if(g) g.remove(); PO.cust = CUSTNAME; load(); }
+function login(n, c){ CUSTNAME = n.trim(); kv('tkc_n', CUSTNAME); kv('tkc_c', String(c).toUpperCase().replace(/[\s-]/g,'')); kv('tkc_t', String(Date.now())); openGate(); }
+(async () => {
+  const m = location.hash.match(/[#&]i=([^&]+)/);
+  if(m){ try{ history.replaceState(null, '', location.pathname + location.search);
+    const raw = decodeURIComponent(m[1]), dot = raw.lastIndexOf('.'), nb = raw.slice(0, dot), c = raw.slice(dot+1);
+    const n = new TextDecoder().decode(Uint8Array.from(atob(nb.replace(/-/g,'+').replace(/_/g,'/')), ch => ch.charCodeAt(0)));
+    if(await valid(n, c)){ login(n, c); return; } }catch(e){} }
+  const n0 = kv('tkc_n'), c0 = kv('tkc_c'), t0 = +kv('tkc_t');
+  if(n0 && c0 && t0>0 && Date.now()-t0 < 30*864e5 && await valid(n0, c0)){ CUSTNAME = n0; openGate(); return; }
+  if(n0) $('#gate-name').value = n0;
+  setTimeout(() => { const i = $(n0 ? '#gate-pw' : '#gate-name'); if(i) i.focus(); }, 50);
+  $('#gate-f').addEventListener('submit', async e => {
+    e.preventDefault();
+    const n = $('#gate-name').value, c = $('#gate-pw').value;
+    if(await valid(n, c)) login(n, c);
+    else { $('#gate-err').textContent = '고객사명 또는 접근 코드가 맞지 않습니다. 태광베어링 담당자에게 문의해 주세요.'; $('#gate-pw').select(); }
+  });
+})();
+})();
+</script>
+
+</body>
+</html>
