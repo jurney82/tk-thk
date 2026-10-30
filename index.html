@@ -242,7 +242,8 @@ td.ck input{width:18px;height:18px;cursor:pointer;margin:0}
 #dec .chip{cursor:pointer}
 footer .rights{margin-top:6px;color:var(--ink);font-weight:500}
 .qbtn{background:var(--accent)!important;color:var(--accent-ink)!important;border-color:var(--accent)!important}
-#quote-modal .form{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+#quote-modal .form{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+#quote-text{min-height:240px}
 #quote-text{width:100%;box-sizing:border-box;font:inherit;font-size:14px;line-height:1.55;border:1.5px solid var(--line);border-radius:var(--r);padding:8px 10px;background:var(--sunk);color:var(--ink);resize:vertical}
 .helpbtn{border:1px solid var(--line);background:var(--surface);color:var(--accent);border-radius:999px;padding:3px 11px;font-size:12.5px;font-weight:600;cursor:pointer;margin-left:2px}
 .helpc{display:grid;gap:10px;font-size:14px;line-height:1.6}.helpc h4{margin:6px 0 0;font-size:14px}.helpc ul{margin:0;padding-left:18px}.helpc li{margin:2px 0}.helpc code{font-family:var(--f-mono);background:var(--sunk);padding:0 4px;border-radius:3px}
@@ -1642,27 +1643,34 @@ addEventListener('resize', () => { if(curView!=null) document.body.classList.tog
 const QF = {name:'', tel:''};
 try{ QF.name = localStorage.getItem('tkc-q-name')||''; QF.tel = localStorage.getItem('tkc-q-tel')||''; }catch(e){}
 function quoteRef(t){ return String(t||'').replace(/ \(원본 페이지 첨부드립니다\)/g,'').split('\n').filter(l => !/첨부드립니다/.test(l)).join('\n').trim(); }
+function quoteBody(models, ref){
+  const r = quoteRef(ref), lines = [];
+  if(models.length){ models.forEach(m => lines.push(`${m}  수량: `)); }
+  if(r){ if(lines.length) lines.push(''); lines.push('[참고 — 앱에서 확인한 내용]', r); }
+  return lines.join('\n');
+}
 function openQuote(models, ref){
   models = (models||[]).filter(Boolean);
   let m = $('#quote-modal');
   if(!m){ m = document.createElement('div'); m.id = 'quote-modal'; m.className = 'modal'; document.body.appendChild(m); }
   const f = (id, lab, val, ph) => `<div class="fld"><label for="${id}">${lab}</label><input id="${id}" value="${esc(val||'')}" placeholder="${esc(ph||'')}" autocomplete="off"></div>`;
   m.innerHTML = `<div class="mbox" role="dialog" aria-label="견적 문의"><div class="mhead"><b>견적 문의 — 태광베어링</b><button type="button" class="mx" data-mclose="1" aria-label="닫기">×</button></div>
-    <p class="hint" style="margin:0 0 6px">수량·희망 납기를 적고 「메일 보내기」를 누르면 태광베어링으로 보낼 메일이 작성됩니다.</p>
-    <div class="form">${f('q-model','형번', models.join(', '), '예: HSR25A2SSC1+1240LP-II')}${f('q-qty','수량','', '예: 블록 4개, 레일 2본')}${f('q-due','희망 납기','', '예: 11월 말')}${f('q-name','문의자', QF.name, '성함')}${f('q-tel','연락처', QF.tel, '전화·메일')}</div>
-    <label class="hint" for="quote-text" style="display:block;margin:8px 0 4px">요청 사항 · 참고 내용</label>
-    <textarea id="quote-text" rows="8" placeholder="레일 길이, 사용 조건 등">${esc(quoteRef(ref))}</textarea>
+    <p class="hint" style="margin:0 0 6px">형번·수량을 한 줄에 하나씩 적고 「메일 보내기」를 누르면 태광베어링으로 보낼 메일이 작성됩니다.</p>
+    <label class="hint" for="quote-text" style="display:block;margin:2px 0 4px">요청 사항 · 참고 내용 <span style="opacity:.8">(형번·수량, 레일 길이, 사용 조건 등)</span></label>
+    <textarea id="quote-text" rows="13" placeholder="예)&#10;HSR25A2SSC1+1240LP-II  2세트&#10;SSR20XW2UU+580L  4세트&#10;&#10;레일 길이, 사용 조건, 대체품 가능 여부 등">${esc(quoteBody(models, ref))}</textarea>
+    <div class="form" style="margin-top:8px">${f('q-due','희망 납기','', '예: 11월 말')}${f('q-name','문의자', QF.name, '성함')}${f('q-tel','연락처', QF.tel, '전화·메일')}</div>
     <div class="porow" style="margin-top:8px"><button type="button" class="pobtn" id="q-send">메일 보내기</button><button type="button" id="q-copy" class="sbtn">내용 복사</button><span class="hint" id="q-msg">받는 곳: ${esc(MAIL)}</span></div></div>`;
   m.hidden = false;
-  setTimeout(() => { const q = $(models.length ? '#q-qty' : '#q-model'); if(q) q.focus(); }, 30);
+  setTimeout(() => { const q = $('#quote-text'); if(q){ q.focus(); const k = q.value.indexOf('수량: ') ; if(k>=0) q.setSelectionRange(k+4, k+4); } }, 30);
 }
 function quoteMail(){
   const g = id => ($('#'+id)||{}).value ? $('#'+id).value.trim() : '';
   QF.name = g('q-name'); QF.tel = g('q-tel');
   try{ localStorage.setItem('tkc-q-name', QF.name); localStorage.setItem('tkc-q-tel', QF.tel); }catch(e){}
-  const model = g('q-model'), ref = ($('#quote-text')||{}).value || '';
-  const subject = `[견적문의] ${CUSTNAME || '고객사'}${model ? ' - ' + model : ''}`;
-  const body = ['태광베어링 견적 문의드립니다.', '', `고객사: ${CUSTNAME}`, `문의자: ${QF.name}`, `연락처: ${QF.tel}`, '', `형번: ${model}`, `수량: ${g('q-qty')}`, `희망 납기: ${g('q-due')}`,
+  const ref = ($('#quote-text')||{}).value || '', first = (ref.trim().split('\n')[0] || '').replace(/\s+수량:.*$/, '').slice(0, 40);
+  const nm = (ref.match(/수량:/g) || []).length;
+  const subject = `[견적문의] ${CUSTNAME || '고객사'}${first && !/^\[/.test(first) ? ' - ' + first + (nm > 1 ? ` 외 ${nm-1}건` : '') : ''}`;
+  const body = ['태광베어링 견적 문의드립니다.', '', `고객사: ${CUSTNAME}`, `문의자: ${QF.name}`, `연락처: ${QF.tel}`, `희망 납기: ${g('q-due')}`,
     ...(ref.trim() ? ['', '[요청 사항 · 참고 내용]', ref.trim()] : []), '', '— THK 카탈로그 검색(태광베어링 제공)에서 작성'].join('\n');
   return {subject, body};
 }
