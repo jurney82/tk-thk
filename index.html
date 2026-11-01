@@ -109,6 +109,8 @@ table.xt th:first-child{position:sticky;left:0;z-index:1}
 table.xt td{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 table.xt td.tx{text-align:left;font-family:inherit}
 table.xt tr.hd td{font-weight:700;color:var(--ink);font-family:inherit}
+#xr-ask{height:40px;padding:0 16px;border:1.5px solid var(--accent);border-radius:var(--r);background:var(--surface);color:var(--accent);font-weight:700;font-size:14px;cursor:pointer}
+.xpct{color:#b45309;font-weight:700;font-family:inherit}
 .xnote{font-size:12.5px;color:var(--muted);line-height:1.6;margin:10px 0 0;padding-left:18px}
 /*XREFCSS-END*/
 table.st{border-collapse:collapse;width:100%;font-size:13px}
@@ -1628,7 +1630,7 @@ function xrTable(src, list){
       let v = xv(r[f]), cls = '';
       if(k){ const s = src[f]; if(f==='L'){ const d = Math.round((r.L - s)*10)/10; v += ` <span class="hint">(${d>0?'+':''}${d})</span>`; if(Math.abs(d) > 5) cls = 'xd'; }
         else if(!/^(Cd|C0|HR)$/.test(f) && String(r[f]??'') !== String(s??'') && !(f==='S' && (!r[f]||!s))) cls = 'xd'; }
-      if(/^(Cd|C0)$/.test(f) && r[f]) v += ` <span class="hint">(약 ${kgN(r[f])} kg)</span>`;
+      if(/^(Cd|C0)$/.test(f) && r[f]){ v += ` <span class="hint">(약 ${kgN(r[f])} kg)</span>`; if(k && src[f]){ const pc = Math.round((r[f]/src[f]-1)*100); if(Math.abs(pc) >= 10) v += ` <span class="xpct">${pc>0?'+':''}${pc}%</span>`; } }
       h += `<td class="${cls}">${v}</td>`;
     });
     h += '</tr>';
@@ -1641,6 +1643,7 @@ function xrNotes(){
   return `<ul class="xnote"><li><b>장착 치수 동일</b>: 높이·폭·볼트구멍(B·C)·블록 볼트·레일 폭·레일 피치·레일 볼트가 같고 블록 길이 차이가 5mm 이내. 하나라도 다르면 <b>조건부</b>로 표시합니다.</li>
     <li>블록과 레일은 <b>세트로 교체</b>하는 기준입니다. 타사 레일에 THK 블록(또는 반대)은 궤도가 달라 섞어 쓸 수 없습니다.</li>
     <li>정밀도·예압·씰·그리스 니플·레일 길이는 별도로 확인하세요. 블록 길이가 달라지면 스트로크·간섭을 확인하세요.</li>
+    <li>정격하중은 같은 크기라도 회사·형식마다 다릅니다. 10% 이상 차이 나면 주황색 %로 표시하니, 사용 하중·수명은 「계산기」로 확인하세요.</li>
     <li>각 사 카탈로그 치수표를 대조해 만든 참고 자료입니다. 최종 선정 전 태광베어링에 확인해 주세요.</li></ul>`;
 }
 function xrText(src, list){
