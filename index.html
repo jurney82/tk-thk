@@ -295,6 +295,7 @@ footer{max-width:1280px;margin:0 auto;padding-block:0 30px;padding-left:max(16px
     <input id="gate-pw" type="password" autocapitalize="characters" autocomplete="current-password" placeholder="접근 코드 6자리" style="height:44px;font-size:18px;text-align:center;border:1.5px solid var(--line,#d5dce2);border-radius:8px;background:var(--sunk,#f6f8f9);color:inherit">
     <button type="submit" style="height:44px;border:0;border-radius:8px;background:var(--accent,#1a6fc4);color:#fff;font-weight:700;font-size:15px">확인</button>
     <div id="gate-err" style="font-size:13px;color:#b3261e;min-height:1em"></div>
+    <div style="font-size:11.5px;color:var(--muted,#5a6876);line-height:1.5">서비스 개선과 견적 응대를 위해 검색·조회 기록이 태광베어링에 저장됩니다.</div>
   </form>
 </div>
 <header>
@@ -318,7 +319,7 @@ footer{max-width:1280px;margin:0 auto;padding-block:0 30px;padding-left:max(16px
   <section id="dec" hidden></section><section id="xref" hidden></section>
   <section id="viewer" hidden></section>
 </main>
-<footer>원본: THK·삼익THK 카탈로그 PDF 31개에서 추출. 표의 숫자는 PDF에서 자동으로 뽑은 값이라, 노란색으로 표시된 원본 줄과 대조해 확인하세요. 계산 결과는 카탈로그 공식에 따른 참고값이며, 최종 선정은 제조사(THK·삼익THK) 기준으로 확인해 주세요. 견적·납기 문의: <a href="mailto:adam@bearings.co.kr">adam@bearings.co.kr</a><div class="rights">ⓒ 2026 태광베어링 · 이 검색 도구는 태광베어링이 고객사에 제공하는 것으로, 사용 권한은 태광베어링에 있으며 허가 없이 복제·배포할 수 없습니다. 카탈로그 내용의 저작권은 THK·삼익THK에 있습니다.</div></footer>
+<footer>원본: THK·삼익THK 카탈로그 PDF 31개에서 추출. 표의 숫자는 PDF에서 자동으로 뽑은 값이라, 노란색으로 표시된 원본 줄과 대조해 확인하세요. 계산 결과는 카탈로그 공식에 따른 참고값이며, 최종 선정은 제조사(THK·삼익THK) 기준으로 확인해 주세요. 견적·납기 문의: <a href="mailto:adam@bearings.co.kr">adam@bearings.co.kr</a><div class="rights">서비스 개선과 견적 응대를 위해 검색·조회 기록(고객사명·검색 내용)이 태광베어링에 저장됩니다.<br>ⓒ 2026 태광베어링 · 이 검색 도구는 태광베어링이 고객사에 제공하는 것으로, 사용 권한은 태광베어링에 있으며 허가 없이 복제·배포할 수 없습니다. 카탈로그 내용의 저작권은 THK·삼익THK에 있습니다.</div></footer>
 
 <script>
 (() => {
@@ -547,6 +548,7 @@ function itemHead(i){
 
 function run(q){
   q = q.trim(); lastQ = q; $('#clear').hidden = !q;
+  if(q.length >= 2) ulog('검색', q, 2500);
   if(!D) return;
   if(q.length<2){ renderHome(); return; }
   const P = parse(q); let html = '';
@@ -602,6 +604,7 @@ function neighbors(i){
   return {prev: i>0 && D.pages[i-1].f===p.f ? i-1 : null, next: i<D.pages.length-1 && D.pages[i+1].f===p.f ? i+1 : null};
 }
 function openPage(i, useHl, spec){
+  try{ const pp = D.pages[i]; ulog('페이지', D.short[pp.c] + ' ' + pp.l + (spec ? ' · ' + spec.m : ''), 1500); }catch(_){}
   curView = i;
   const p = D.pages[i], v = $('#viewer'), nb = neighbors(i);
   let set = [i];
@@ -985,6 +988,7 @@ function renderCalcPicker(){
   return `<div class="cpick">${Object.entries(CALCS).map(([k,c])=>`<button data-cp="${k}" class="${calcState.id===k?'on':''}"><b>${esc(c.title)}</b><span>${esc(c.sub)}</span></button>`).join('')}</div>`;
 }
 function renderCalc(){
+  try{ ulog('계산기', CALCS[calcState.id].title + (calcState.spec ? ' · ' + calcState.spec.m : ''), 3000); }catch(_){}
   const c = CALCS[calcState.id], v = calcState.vals;
   const spec = calcState.spec;
   const cands = specsByModel(v.model || '', c.fam);
@@ -1112,6 +1116,7 @@ function pdfName(){
 }
 function loadLib(src){ return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => no(new Error('load')); document.head.appendChild(s); }); }
 async function savePdf(){
+  try{ ulog('계산서 PDF', CALCS[calcState.id].title + (calcState.spec ? ' · ' + calcState.spec.m : '')); }catch(_){}
   const btn = $('#po-btn'), msg = $('#po-msg');
   let host = $('#print-sheet'); if(!host){ host = document.createElement('div'); host.id = 'print-sheet'; document.body.appendChild(host); }
   host.innerHTML = sheetHtml();
@@ -1509,6 +1514,7 @@ function decode(raw){
   return {ser, size, type, key, parts, warn, info, ref:R.ref, norm:s};
 }
 function decHtml(q){
+  if(q && String(q).trim().length > 3) ulog('형번 풀이', String(q).trim(), 2500);
   if(!q) return '';
   const d = decode(q);
   if(d.err) return `<div class="note">${esc(d.err)}</div>`;
@@ -1655,6 +1661,7 @@ function xrText(src, list){
 }
 let XR_LAST = null;
 function xrHtml(q){
+  if(q && String(q).trim().length > 2) ulog('호환 찾기', String(q).trim(), 2500);
   if(!XR) return '';
   const r = xrFind(q);
   if(r.kind==='none') return q.trim() ? `<div class="note">「${esc(q)}」에 맞는 형번이 없습니다. HIWIN(HG·EG·MG·QH·QE) · PMI(MSA·MSB·MSC) · WON(H·S·HS·M·MB) 주력 계열과 THK HSR·SHS·SR·SSR·SRS를 다룹니다.</div>` + xrNotes() : xrNotes();
@@ -1719,8 +1726,8 @@ document.addEventListener('click', e => {
   switch(b.id){
     case 'cmp-open': openCmp(); break;
     case 'cmp-clear': CMP.length = 0; document.querySelectorAll('input[data-cmp]').forEach(c => c.checked = false); cmpBar(); break;
-    case 'cmp-pdf': exportPdf(cmpSheet(), cmpName(), $('#cmp-msg'), b); break;
-    case 'cmp-xlsx': cmpXlsx(); break;
+    case 'cmp-pdf': try{ ulog('비교표 PDF', cmpData().models.join(', ')); }catch(_){} exportPdf(cmpSheet(), cmpName(), $('#cmp-msg'), b); break;
+    case 'cmp-xlsx': try{ ulog('비교표 엑셀', cmpData().models.join(', ')); }catch(_){} cmpXlsx(); break;
     case 'cmp-reply': openQuote(cmpData().models, cmpReplyText()); break;
     case 'quote-btn': openQuote([], ''); break;
     case 'q-send': sendQuote(); break;
@@ -1807,17 +1814,32 @@ function quoteMail(){
   return {subject, body};
 }
 function sendQuote(){
+  try{ ulog('견적 문의', (($('#quote-text')||{}).value||'').split('\n').filter(Boolean).slice(0,3).join(' / ')); uFlush(); }catch(_){}
   const {subject, body} = quoteMail();
   const a = document.createElement('a'); a.href = `mailto:${MAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`; a.target = '_top'; document.body.appendChild(a); a.click(); a.remove();
   const msg = $('#q-msg'); if(msg) msg.innerHTML = `메일 앱이 열리지 않으면 「내용 복사」 후 <b>${esc(MAIL)}</b>로 보내 주세요.`;
 }
 async function copyQuote(){
+  try{ ulog('견적 문의(복사)', (($('#quote-text')||{}).value||'').split('\n').filter(Boolean).slice(0,3).join(' / ')); uFlush(); }catch(_){}
   const {subject, body} = quoteMail(), t = `받는 곳: ${MAIL}\n제목: ${subject}\n\n${body}`;
   let ok = false;
   try{ await navigator.clipboard.writeText(t); ok = true; }catch(e){}
   if(!ok){ try{ const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy'); ta.remove(); }catch(e){} }
   const msg = $('#q-msg'); if(msg) msg.textContent = ok ? `복사했습니다. 메일에 붙여 넣어 ${MAIL}로 보내 주세요.` : '복사가 막혀 있습니다. 화면을 캡처해 보내 주셔도 됩니다.';
 }
+/* ===== 사용 기록 (고객사별 검색·조회 → 태광베어링) ===== */
+const ULOG_URL = 'https://script.google.com/macros/s/AKfycbyPgKHKGtqKtHLK3WiSg9cqWUL_Zr_EFFVTHU44Xh_FjoxpHZSTl6WRnQJaODjzd7ap/exec', ULOG_KEY = 'tu7d46f2a28d842d2f', USID = Math.random().toString(36).slice(2,8);
+const UQ = [], UPEND = {}, ULAST = {};
+function uDev(){ return /Android|iPhone|iPad/i.test(navigator.userAgent) ? '휴대폰' : 'PC'; }
+function uNow(){ const d = new Date(), p = n => String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; }
+function uPush(k, x){ x = String(x||'').slice(0,120); const key = k + '|' + x; if(ULAST[k] === key) return; ULAST[k] = key; UQ.push({t:uNow(), cu:(typeof CUSTNAME!=='undefined'?CUSTNAME:''), dev:uDev(), k, x, s:USID}); if(UQ.length >= 20) uFlush(); }
+function ulog(k, x, wait){ if(!ULOG_URL) return; try{ if(wait){ clearTimeout(UPEND[k]); UPEND[k] = setTimeout(() => uPush(k, x), wait); } else uPush(k, x); }catch(e){} }
+function uFlush(beacon){ if(!ULOG_URL || !UQ.length) return; const body = JSON.stringify({key:ULOG_KEY, type:'usage', rows: UQ.splice(0, UQ.length)});
+  try{ if(beacon && navigator.sendBeacon && navigator.sendBeacon(ULOG_URL, new Blob([body], {type:'text/plain;charset=utf-8'}))) return; }catch(e){}
+  try{ fetch(ULOG_URL, {method:'POST', mode:'no-cors', keepalive:true, headers:{'Content-Type':'text/plain;charset=utf-8'}, body}).catch(()=>{}); }catch(e){} }
+setInterval(() => uFlush(), 8000);
+addEventListener('pagehide', () => { Object.keys(UPEND).forEach(k => clearTimeout(UPEND[k])); uFlush(true); });
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'hidden') uFlush(true); });
 /* ===== 접근 코드 (고객사별 · 코드 원문은 소스에 없음, 고객사명은 코드로만 풀림) ===== */
 const KEY = 'f57a66507ed8176e442410d53d43e266', BLOCK = [];
 let CUSTNAME = '';
@@ -1828,7 +1850,7 @@ async function codeOf(name){ const te = new TextEncoder(), k = await crypto.subt
 async function shaHex(t){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,'0')).join(''); }
 async function valid(name, code){ if(!normName(name)) return false; code = String(code||'').toUpperCase().replace(/[\s-]/g,''); if(code !== await codeOf(name)) return false; return !BLOCK.includes(await shaHex('tkb|' + normName(name))); }
 function kv(k, v){ try{ if(v===undefined) return localStorage.getItem(k) || sessionStorage.getItem(k); localStorage.setItem(k, v); }catch(e){} try{ if(v!==undefined) sessionStorage.setItem(k, v); else return sessionStorage.getItem(k); }catch(e){} return null; }
-function openGate(){ const g = $('#gate'); if(g) g.remove(); PO.cust = CUSTNAME; load(); }
+function openGate(){ const g = $('#gate'); if(g) g.remove(); PO.cust = CUSTNAME; ulog('접속', ''); load(); }
 function login(n, c){ CUSTNAME = n.trim(); kv('tkc_n', CUSTNAME); kv('tkc_c', String(c).toUpperCase().replace(/[\s-]/g,'')); kv('tkc_t', String(Date.now())); openGate(); }
 (async () => {
   const m = location.hash.match(/[#&]i=([^&]+)/);
